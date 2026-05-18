@@ -1360,7 +1360,26 @@ const defaultState = {
   typicalSalary: 0,
   typicalChay: 0,
   transactions: [],
-  bills: [],
+  bills: [
+    { id: 1, name: 'Halifax (home mortgage)', amount: 1223.07, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
+    { id: 2, name: 'Hbc Council Tax', amount: 173.00, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
+    { id: 3, name: 'Aviva', amount: 24.98, cat: 'insurance', day: 1, fixed: 1, account: 'joint' },
+    { id: 4, name: 'Southern Water', amount: 100.00, cat: 'utilities', day: 1, fixed: 0, account: 'joint' },
+    { id: 5, name: 'Novuna Personal Finance', amount: 10.00, cat: 'other', day: 1, fixed: 1, account: 'joint' },
+    { id: 6, name: 'Octopus Energy', amount: 153.73, cat: 'utilities', day: 1, fixed: 0, account: 'joint' },
+    { id: 7, name: 'Shirley Lewis', amount: 120.00, cat: 'other', day: 1, fixed: 1, account: 'joint' },
+    { id: 8, name: '65 Church Rd Tenants Assoc', amount: 100.00, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
+    { id: 9, name: 'Amazon Prime', amount: 8.99, cat: 'subscription', day: 3, fixed: 1, account: 'joint' },
+    { id: 10, name: 'Disney+', amount: 5.99, cat: 'subscription', day: 4, fixed: 1, account: 'joint' },
+    { id: 11, name: 'Apple', amount: 2.99, cat: 'subscription', day: 5, fixed: 1, account: 'joint' },
+    { id: 12, name: 'The Mortgage Works (flat)', amount: 828.59, cat: 'housing', day: 5, fixed: 1, account: 'joint' },
+    { id: 13, name: 'SMARTY', amount: 9.00, cat: 'utilities', day: 7, fixed: 1, account: 'joint' },
+    { id: 14, name: 'Google Storage', amount: 1.59, cat: 'subscription', day: 10, fixed: 1, account: 'joint' },
+    { id: 15, name: 'Apple (extra)', amount: 0.99, cat: 'subscription', day: 13, fixed: 1, account: 'joint' },
+    { id: 16, name: 'Lightningfibre', amount: 26.00, cat: 'utilities', day: 15, fixed: 1, account: 'joint' },
+    { id: 17, name: '24/7 Home Rescue', amount: 35.75, cat: 'insurance', day: 15, fixed: 1, account: 'joint' },
+    { id: 18, name: 'O2', amount: 27.67, cat: 'utilities', day: 18, fixed: 1, account: 'joint' }
+  ],
   wishlist: [],
   sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
 };
