@@ -1286,7 +1286,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Show what's actually stored</p>
+    <p class="subtitle">Version: v6 · 18 May 2026 · 122 default transactions</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -2703,14 +2703,15 @@ function showDebug() {
   const raw = localStorage.getItem(STORAGE_KEY);
   const txCount = state.transactions ? state.transactions.length : 0;
   const billCount = state.bills ? state.bills.length : 0;
-  let txList = '';
-  if (state.transactions && state.transactions.length > 0) {
-    txList = state.transactions.map((t, i) =>
-      `${i+1}. ${t.type} £${t.amount} - ${t.desc} (${t.date})`
-    ).join('\n');
-  } else {
-    txList = '(none)';
-  }
+
+  const cycle = getSalaryMonth();
+  const totals = getTotals();
+  const ins = state.transactions.filter(t => t.type === 'in');
+  const inThisCycle = ins.filter(t => payCycleForStr(t.date) === cycle);
+
+  let inDebug = ins.map(t =>
+    `  ${t.date}: ${t.desc.slice(0,20).padEnd(20)} £${t.amount.toFixed(2)} -> cycle ${payCycleForStr(t.date)}`
+  ).join('\n');
 
   // Try each render and report errors
   const errors = [];
@@ -2722,13 +2723,22 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `Transactions in state: ${txCount}
+  el.textContent = `VERSION: v6
+Today: ${new Date().toISOString().slice(0,10)}
+Current pay cycle: ${cycle}
+
+Transactions in state: ${txCount}
 Bills in state: ${billCount}
 
-Transactions list:
-${txList}
+ALL 'in' transactions:
+${inDebug || '  (none)'}
 
-Errors:
+'In' assigned to THIS cycle (${cycle}): ${inThisCycle.length}
+Expected monthIn: £${inThisCycle.reduce((s,t)=>s+t.amount, 0).toFixed(2)}
+Actual monthIn from getTotals: £${totals.monthIn.toFixed(2)}
+Actual monthOut: £${totals.monthOut.toFixed(2)}
+
+Render errors:
 ${errors.length > 0 ? errors.join('\n') : '(none)'}
 
 Raw localStorage length: ${raw ? raw.length : 0} chars
