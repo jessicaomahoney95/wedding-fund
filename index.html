@@ -824,6 +824,15 @@
   .tag.account-me { background: var(--olive); color: var(--sand-light); }
   .tag.account-chay { background: var(--accent); color: var(--sand-light); }
   .tag.varies { background: var(--gold); color: var(--sand-light); }
+  .tag.paid { background: var(--olive); color: var(--sand-light); }
+
+  .item.bill-paid {
+    opacity: 0.55;
+  }
+
+  .item.bill-paid .item-amount {
+    text-decoration: line-through;
+  }
 
   .item.upcoming-today { border-left: 3px solid var(--rust); }
   .item.upcoming-soon { border-left: 3px solid var(--gold); }
@@ -1468,9 +1477,6 @@ const defaultState = {
   transactions: [
     {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income"},
     {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income"},
-    {"id": 1777507200002, "type": "out", "amount": 2737.0, "desc": "Monthly Bills   Pot", "date": "2026-04-30", "deposit": 0, "category": "Transfers"},
-    {"id": 1777507200003, "type": "out", "amount": 62.15, "desc": "Chay Penfold", "date": "2026-04-30", "deposit": 0, "category": "Transfers"},
-    {"id": 1777507200004, "type": "out", "amount": 150.0, "desc": "Jessica O'Mahoney", "date": "2026-04-30", "deposit": 0, "category": "Transfers"},
     {"id": 1777507200005, "type": "out", "amount": 17.61, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
     {"id": 1777507200006, "type": "out", "amount": 0.39, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
     {"id": 1777507200007, "type": "out", "amount": 30.37, "desc": "D R Luckhurst Butchers", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
@@ -1488,16 +1494,11 @@ const defaultState = {
     {"id": 1777507200019, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
     {"id": 1777507200020, "type": "out", "amount": 3.87, "desc": "Milk & More", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
     {"id": 1777507200021, "type": "out", "amount": 0.13, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777593600022, "type": "in", "amount": 100.0, "desc": "Monthly Bills   Pot", "date": "2026-05-01", "deposit": 0, "category": "Transfers"},
     {"id": 1777593600023, "type": "out", "amount": 100.0, "desc": "65 CHURCH RD TENANTS ASSOC", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600024, "type": "in", "amount": 1223.07, "desc": "Monthly Bills   Pot", "date": "2026-05-01", "deposit": 0, "category": "Transfers"},
     {"id": 1777593600025, "type": "out", "amount": 1223.07, "desc": "Halifax", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600026, "type": "in", "amount": 173.0, "desc": "Monthly Bills   Pot", "date": "2026-05-01", "deposit": 0, "category": "Transfers"},
     {"id": 1777593600027, "type": "out", "amount": 173.0, "desc": "Hbc Council Tax", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600028, "type": "in", "amount": 100.0, "desc": "Monthly Bills   Pot", "date": "2026-05-01", "deposit": 0, "category": "Transfers"},
     {"id": 1777593600029, "type": "out", "amount": 100.0, "desc": "Southern Water", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
     {"id": 1777593600030, "type": "out", "amount": 10.0, "desc": "Novuna Personal Finance", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600031, "type": "in", "amount": 153.73, "desc": "Monthly Bills   Pot", "date": "2026-05-01", "deposit": 0, "category": "Transfers"},
     {"id": 1777593600032, "type": "out", "amount": 153.73, "desc": "Octopus Energy", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
     {"id": 1777593600033, "type": "out", "amount": 12.65, "desc": "Murco Costcutter", "date": "2026-05-01", "deposit": 0, "category": "Transport"},
     {"id": 1777593600034, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings"},
@@ -1527,7 +1528,6 @@ const defaultState = {
     {"id": 1777852800058, "type": "out", "amount": 4.0, "desc": "Sip & Savour", "date": "2026-05-04", "deposit": 0, "category": "Eating out"},
     {"id": 1777852800059, "type": "out", "amount": 5.99, "desc": "Disney+", "date": "2026-05-04", "deposit": 0, "category": "Bills"},
     {"id": 1777852800060, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-04", "deposit": 0, "category": "Savings"},
-    {"id": 1777939200061, "type": "in", "amount": 828.59, "desc": "Monthly Bills   Pot", "date": "2026-05-05", "deposit": 0, "category": "Transfers"},
     {"id": 1777939200062, "type": "out", "amount": 828.59, "desc": "The Mortgage Works", "date": "2026-05-05", "deposit": 0, "category": "Bills"},
     {"id": 1777939200063, "type": "out", "amount": 69.68, "desc": "Tesco", "date": "2026-05-05", "deposit": 0, "category": "Groceries"},
     {"id": 1777939200064, "type": "out", "amount": 0.32, "desc": "Christmas Savings  Pot", "date": "2026-05-05", "deposit": 0, "category": "Savings"},
@@ -1539,7 +1539,6 @@ const defaultState = {
     {"id": 1778025600070, "type": "out", "amount": 3.2, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping"},
     {"id": 1778025600071, "type": "out", "amount": 0.8, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings"},
     {"id": 1778112000072, "type": "out", "amount": 9.0, "desc": "SMARTY", "date": "2026-05-07", "deposit": 0, "category": "Bills"},
-    {"id": 1778112000073, "type": "in", "amount": 12.0, "desc": "Monthly Bills   Pot", "date": "2026-05-07", "deposit": 0, "category": "Transfers"},
     {"id": 1778112000074, "type": "out", "amount": 6.81, "desc": "Milk & More", "date": "2026-05-07", "deposit": 0, "category": "Groceries"},
     {"id": 1778112000075, "type": "out", "amount": 0.19, "desc": "Christmas Savings  Pot", "date": "2026-05-07", "deposit": 0, "category": "Savings"},
     {"id": 1778198400076, "type": "out", "amount": 58.32, "desc": "Harrington's Pet Food", "date": "2026-05-08", "deposit": 0, "category": "General"},
@@ -1568,19 +1567,16 @@ const defaultState = {
     {"id": 1778544000099, "type": "out", "amount": 0.5, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings"},
     {"id": 1778630400100, "type": "out", "amount": 5.18, "desc": "McDonald\u2019s", "date": "2026-05-13", "deposit": 0, "category": "Eating out"},
     {"id": 1778630400101, "type": "out", "amount": 0.82, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings"},
-    {"id": 1778630400102, "type": "out", "amount": 20.0, "desc": "Chay Penfold", "date": "2026-05-13", "deposit": 0, "category": "Transfers"},
     {"id": 1778630400103, "type": "out", "amount": 3.8, "desc": "Hazells Convenience St", "date": "2026-05-13", "deposit": 0, "category": "Groceries"},
     {"id": 1778630400104, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings"},
     {"id": 1778716800105, "type": "out", "amount": 31.77, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
     {"id": 1778716800106, "type": "out", "amount": 0.23, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
     {"id": 1778716800107, "type": "out", "amount": 3.85, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
     {"id": 1778716800108, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
-    {"id": 1778716800109, "type": "out", "amount": 33.8, "desc": "Jessica O'Mahoney", "date": "2026-05-14", "deposit": 0, "category": "Transfers"},
     {"id": 1778716800110, "type": "out", "amount": 9.75, "desc": "Milk & More", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
     {"id": 1778716800111, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
     {"id": 1778803200112, "type": "out", "amount": 35.75, "desc": "24|7 Home Rescue", "date": "2026-05-15", "deposit": 0, "category": "Bills"},
     {"id": 1778803200113, "type": "out", "amount": 26.0, "desc": "Lightningfibre", "date": "2026-05-15", "deposit": 0, "category": "Bills"},
-    {"id": 1778803200114, "type": "in", "amount": 61.0, "desc": "Monthly Bills   Pot", "date": "2026-05-15", "deposit": 0, "category": "Transfers"},
     {"id": 1778803200115, "type": "out", "amount": 3.95, "desc": "Hazells Convenience St", "date": "2026-05-15", "deposit": 0, "category": "Groceries"},
     {"id": 1778803200116, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-15", "deposit": 0, "category": "Savings"},
     {"id": 1778889600117, "type": "out", "amount": 4.7, "desc": "Tesco", "date": "2026-05-16", "deposit": 0, "category": "Groceries"},
@@ -1590,9 +1586,6 @@ const defaultState = {
     {"id": 1778889600121, "type": "in", "amount": 23.86, "desc": "W Baxter", "date": "2026-05-16", "deposit": 0, "category": "Income"},
     {"id": 1778889600122, "type": "out", "amount": 27.24, "desc": "Aldi", "date": "2026-05-16", "deposit": 0, "category": "Groceries"},
     {"id": 1778889600123, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings"},
-    {"id": 1778976000124, "type": "out", "amount": 38.94, "desc": "Chay Penfold", "date": "2026-05-17", "deposit": 0, "category": "Transfers"},
-    {"id": 1778976000125, "type": "in", "amount": 38.94, "desc": "Chay Penfold", "date": "2026-05-17", "deposit": 0, "category": "Transfers"},
-    {"id": 1778976000126, "type": "in", "amount": 38.94, "desc": "Monthly Bills   Pot", "date": "2026-05-17", "deposit": 0, "category": "Transfers"},
     {"id": 1778976000127, "type": "out", "amount": 10.8, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out"},
     {"id": 1778976000128, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
     {"id": 1778976000129, "type": "out", "amount": 9.9, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out"},
@@ -1602,7 +1595,6 @@ const defaultState = {
     {"id": 1778976000133, "type": "out", "amount": 1.75, "desc": "Amazon", "date": "2026-05-17", "deposit": 0, "category": "Shopping"},
     {"id": 1778976000134, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
     {"id": 1779062400135, "type": "out", "amount": 27.67, "desc": "O2", "date": "2026-05-18", "deposit": 0, "category": "Bills"},
-    {"id": 1779062400136, "type": "in", "amount": 27.37, "desc": "Monthly Bills   Pot", "date": "2026-05-18", "deposit": 0, "category": "Transfers"},
     {"id": 1779062400137, "type": "out", "amount": 8.55, "desc": "J Andersen Limited", "date": "2026-05-18", "deposit": 0, "category": "General"},
     {"id": 1779062400138, "type": "out", "amount": 0.45, "desc": "Christmas Savings  Pot", "date": "2026-05-18", "deposit": 0, "category": "Savings"}
   ],
@@ -1669,6 +1661,10 @@ function save() {
 }
 
 function fmt(n) {
+  return Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtWhole(n) {
   return Math.round(n).toLocaleString('en-GB');
 }
 
@@ -2305,6 +2301,8 @@ function renderBills() {
   document.getElementById('billsTotal').textContent = fmt(total);
   document.getElementById('billsCount').textContent = state.bills.length + (state.bills.length === 1 ? ' recurring item' : ' recurring items');
 
+  const thisMonth = new Date().toISOString().slice(0, 7);
+
   // Account totals
   const totals = { joint: 0, me: 0, chay: 0, variable: 0 };
   state.bills.forEach(b => {
@@ -2321,19 +2319,20 @@ function renderBills() {
   if (state.bills.length === 0) {
     el.innerHTML = '<div class="empty">No bills yet. Add the ones you pay every month so you can see what\'s left for saving.</div>';
   } else {
-    // Sort by day of month
     const sorted = [...state.bills].sort((a, b) => (a.day || 99) - (b.day || 99));
     el.innerHTML = sorted.map(b => {
       const accClass = b.account || 'joint';
       const accLabel = accClass === 'joint' ? 'Joint' : accClass === 'me' ? 'Yours' : 'Chay\'s';
       const fixedTag = b.fixed === 0 ? '<span class="tag varies">Varies</span>' : '';
       const dayLabel = b.day ? `Day ${b.day}` : '';
+      const paidThisMonth = b.paidMonths && b.paidMonths.includes(thisMonth);
+      const paidTag = paidThisMonth ? '<span class="tag paid">Paid</span>' : '';
       return `
-        <div class="item">
+        <div class="item ${paidThisMonth ? 'bill-paid' : ''}">
           <div class="item-info">
             <div class="item-title">${escapeHtml(b.name)}</div>
             <div class="item-meta">
-              ${dayLabel ? dayLabel + ' · ' : ''}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag}
+              ${dayLabel ? dayLabel + ' · ' : ''}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag} ${paidTag}
             </div>
           </div>
           <div class="item-amount out">-£${fmt(b.amount)}</div>
@@ -2490,6 +2489,17 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
 
       const newTxs = [];
       let skipped = 0;
+      let matchedToBills = 0;
+
+      // Build a lookup of bill names for fuzzy matching
+      // We'll normalise names by lowercasing and stripping non-alphanumeric
+      const normaliseForMatch = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const billLookup = state.bills.map(b => ({
+        bill: b,
+        normName: normaliseForMatch(b.name),
+        // Also pull out distinctive words from the bill name
+        words: b.name.toLowerCase().split(/\s+/).filter(w => w.length >= 4 && !['home','flat','tax','your','chay'].includes(w))
+      }));
 
       for (let i = 1; i < lines.length; i++) {
         const cols = parseCsvLine(lines[i]);
@@ -2499,18 +2509,22 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
         const amount = parseFloat(cols[idx.amount]);
         if (!dateRaw || isNaN(amount) || amount === 0) continue;
 
-        // DD/MM/YYYY -> YYYY-MM-DD
         const m = dateRaw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
         if (!m) continue;
         const isoDate = `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+        const monthStr = isoDate.slice(0, 7);
 
+        const txType = cols[idx.type] || '';
         const category = cols[idx.category] || '';
         const name = (cols[idx.name] || '').trim();
         const notes = (cols[idx.notes] || '').trim();
 
+        // Skip internal movements
+        if (txType === 'Pot transfer' && category === 'Transfers') { skipped++; continue; }
+        if (txType === 'Monzo-to-Monzo') { skipped++; continue; }
+
         let type, txAmount, deposit = 0;
         if (category === 'Savings') {
-          // Round-ups / pot transfers — leave the account but aren't wedding fund
           type = 'out';
           txAmount = Math.abs(amount);
         } else if (amount > 0) {
@@ -2523,6 +2537,35 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
 
         let desc = name || notes || category || 'Unknown';
         desc = desc.slice(0, 60);
+
+        // Try to match to a bill if category is "Bills" or it's an out transaction
+        let matchedBillId = null;
+        if (type === 'out' && (category === 'Bills' || txType === 'Direct Debit' || txType === 'Faster payment')) {
+          const txNorm = normaliseForMatch(desc);
+          for (const entry of billLookup) {
+            // Check if normalised names share a substantial substring
+            // or if a distinctive word from the bill appears in the transaction
+            let match = false;
+            if (entry.normName.length >= 4 && (txNorm.includes(entry.normName.slice(0, 6)) || entry.normName.includes(txNorm.slice(0, 6)))) {
+              match = true;
+            }
+            if (!match) {
+              for (const word of entry.words) {
+                if (txNorm.includes(word)) { match = true; break; }
+              }
+            }
+            if (match) {
+              matchedBillId = entry.bill.id;
+              // Mark the bill as paid for this month
+              if (!entry.bill.paidMonths) entry.bill.paidMonths = [];
+              if (!entry.bill.paidMonths.includes(monthStr)) {
+                entry.bill.paidMonths.push(monthStr);
+                matchedToBills++;
+              }
+              break;
+            }
+          }
+        }
 
         const sig = `${isoDate}|${desc}|${txAmount}|${type}`;
         if (existing.has(sig)) {
@@ -2538,20 +2581,26 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
           desc,
           date: isoDate,
           deposit,
-          category
+          category,
+          billId: matchedBillId
         });
       }
 
-      if (newTxs.length === 0) {
+      if (newTxs.length === 0 && matchedToBills === 0) {
         alert(`No new transactions to import. ${skipped} already in your data.`);
         return;
       }
 
-      if (confirm(`Import ${newTxs.length} new transactions${skipped > 0 ? ` (${skipped} already existed and were skipped)` : ''}?`)) {
+      const msgParts = [];
+      if (newTxs.length > 0) msgParts.push(`${newTxs.length} new transactions`);
+      if (matchedToBills > 0) msgParts.push(`${matchedToBills} bills matched & marked paid`);
+      if (skipped > 0) msgParts.push(`${skipped} duplicates skipped`);
+
+      if (confirm(`Import: ${msgParts.join(', ')}?`)) {
         state.transactions.push(...newTxs);
         save();
         renderAll();
-        alert(`Imported ${newTxs.length} transactions.`);
+        alert(`Done. ${msgParts.join(', ')}.`);
       }
     } catch (err) {
       alert('Could not parse that file: ' + err.message);
@@ -2648,9 +2697,12 @@ function renderUpcoming() {
   const now = new Date();
   const today = now.getDate();
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const thisMonth = now.toISOString().slice(0, 7);
 
   // For each bill, work out days until it goes out (this month or next)
-  const billsWithDays = state.bills.map(b => {
+  const billsWithDays = state.bills
+    .filter(b => !(b.paidMonths && b.paidMonths.includes(thisMonth))) // hide if already paid this month
+    .map(b => {
     const day = b.day || 1;
     const effectiveDay = Math.min(day, lastDay); // Handle e.g. day 31 in February
     let daysUntil;
