@@ -303,6 +303,51 @@
   .big-number.positive { color: var(--olive); }
   .big-number.negative { color: var(--rust); }
 
+  .pace-bars { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .pace-row { display: flex; flex-direction: column; gap: 4px; }
+  .pace-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .pace-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .pace-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  .pace-time { background: var(--ink); }
+  .pace-spend.ok { background: var(--olive); }
+  .pace-spend.warn { background: var(--gold); }
+  .pace-spend.over { background: var(--rust); }
+
+  .quick-log-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .quick-log-btn {
+    background: var(--sand-light);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .quick-log-btn:active {
+    background: var(--ink);
+    color: var(--sand);
+  }
+  .quick-log-btn .ql-name { font-weight: 500; display: block; }
+  .quick-log-btn .ql-amt { color: var(--ink-soft); font-size: 11px; display: block; margin-top: 2px; }
+
   .btn {
     display: inline-flex;
     align-items: center;
@@ -459,19 +504,25 @@
 
   .fab {
     position: fixed;
-    right: 16px;
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    width: 56px;
-    height: 56px;
+    right: 20px;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: var(--ink);
     color: var(--sand);
     border: none;
-    font-size: 28px;
+    font-size: 32px;
+    font-weight: 300;
     line-height: 1;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
     z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    padding-bottom: 4px;
   }
 
   .modal {
@@ -977,6 +1028,31 @@
     </div>
   </div>
 
+  <div class="card" id="paydayRecapCard" style="display:none; border: 2px solid var(--olive);">
+    <h2>Payday! Here's how last cycle went</h2>
+    <p class="subtitle" id="paydayRecapSubtitle"></p>
+    <div class="stat-grid" style="margin-bottom: 12px;">
+      <div class="stat">
+        <div class="stat-label">In</div>
+        <div class="stat-value positive" id="recapIn">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Out</div>
+        <div class="stat-value negative" id="recapOut">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Leftover</div>
+        <div class="stat-value" id="recapLeftover">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Saved</div>
+        <div class="stat-value" id="recapSaved">£0</div>
+      </div>
+    </div>
+    <div id="recapAction"></div>
+    <button class="btn btn-ghost btn-full" onclick="dismissRecap()" style="margin-top: 8px;">Dismiss</button>
+  </div>
+
   <div class="card">
     <h2>This month so far</h2>
     <div class="stat-grid">
@@ -1004,6 +1080,28 @@
     <p class="subtitle" id="dailyAllowanceSubtitle">Net leftover, divided by days until payday</p>
     <div class="big-number" id="dailyAllowance">£0</div>
     <div class="subtitle" id="dailyAllowanceDetail" style="margin-top: 8px;"></div>
+  </div>
+
+  <div class="card" id="paceCard">
+    <h2>Pace</h2>
+    <p class="subtitle" id="paceSubtitle">How you're tracking vs the cycle</p>
+    <div class="pace-bars">
+      <div class="pace-row">
+        <div class="pace-label"><span>Time elapsed</span><span id="paceTimeText">0%</span></div>
+        <div class="pace-track"><div class="pace-fill pace-time" id="paceTimeFill" style="width:0%"></div></div>
+      </div>
+      <div class="pace-row">
+        <div class="pace-label"><span>Spending used</span><span id="paceSpendText">0%</span></div>
+        <div class="pace-track"><div class="pace-fill pace-spend" id="paceSpendFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="subtitle" id="paceVerdict" style="margin-top: 10px;"></div>
+  </div>
+
+  <div class="card" id="quickLogCard">
+    <h2>Quick log</h2>
+    <p class="subtitle">One-tap for usual spends — opens prefilled</p>
+    <div class="quick-log-grid" id="quickLogGrid"></div>
   </div>
 
   <div class="card" id="upcomingBillsCard" style="display:none;">
@@ -1313,6 +1411,13 @@
   </div>
 
   <div class="card">
+    <h2>Quick log shortcuts</h2>
+    <p class="subtitle">One-tap buttons on Home for usual spends</p>
+    <div class="item-list" id="quickLogList"></div>
+    <button class="btn btn-ghost btn-full" onclick="addQuickLog()" style="margin-top: 8px;">Add shortcut</button>
+  </div>
+
+  <div class="card">
     <h2>Import Monzo CSV</h2>
     <p class="subtitle">Add transactions from a Monzo data export</p>
     <button class="btn btn-primary btn-full" onclick="importMonzoCsv()">Choose CSV file</button>
@@ -1322,7 +1427,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v9 · affordability planner</p>
+    <p class="subtitle">Version: v12 · quick log, pace tracker, payday recap</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1656,6 +1761,15 @@ const defaultState = {
     {"id": 18, "name": "O2", "amount": 27.67, "fixed": 1, "account": "joint", "day": 18, "paidMonths": ["2026-05"]}
   ],
   wishlist: [],
+  quickLogs: [
+    { id: 1, name: 'Groceries', category: 'Groceries', amount: 30 },
+    { id: 2, name: 'Coffee', category: 'Eating out', amount: 4.50 },
+    { id: 3, name: 'Lunch', category: 'Eating out', amount: 8 },
+    { id: 4, name: 'Petrol', category: 'Transport', amount: 60 },
+    { id: 5, name: 'Takeaway', category: 'Eating out', amount: 25 },
+    { id: 6, name: 'Treat', category: 'Shopping', amount: 15 }
+  ],
+  dismissedRecaps: [],
   sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
 };
 
@@ -1681,6 +1795,9 @@ function load() {
       if (merged.transactions) {
         merged.transactions.forEach(t => { if (t.billId === undefined) t.billId = null; });
       }
+      // Quick log + recap defaults for older saves
+      if (!merged.quickLogs) merged.quickLogs = defaultState.quickLogs;
+      if (!merged.dismissedRecaps) merged.dismissedRecaps = [];
       return merged;
     }
     const v1 = localStorage.getItem('wedding-fund-jess-v1');
@@ -2154,11 +2271,9 @@ function renderHome() {
   netEl.textContent = (net < 0 ? '-£' : '£') + fmt(Math.abs(net));
   netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
 
-  // Daily allowance: take remaining bills (unpaid this cycle) into account
+  // Daily allowance
   const cycle = getSalaryMonth();
   const today = new Date();
-  // Next payday = last working day of current calendar month, OR if today is past it,
-  // last working day of next month
   let nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth());
   const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   if (todayMid >= nextPayday) {
@@ -2167,21 +2282,21 @@ function renderHome() {
   const msPerDay = 1000 * 60 * 60 * 24;
   const daysToPayday = Math.max(1, Math.ceil((nextPayday - todayMid) / msPerDay));
 
-  // Unpaid bills for this cycle
   const unpaidBillsTotal = state.bills
     .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
     .reduce((s, b) => s + b.amount, 0);
 
-  // Money still available to spend = net - any bills still due this cycle
   const availableToSpend = net - unpaidBillsTotal;
   const dailyAllowance = availableToSpend / daysToPayday;
   const dailyEl = document.getElementById('dailyAllowance');
-  dailyEl.textContent = (dailyAllowance < 0 ? '-£' : '£') + fmt(Math.abs(dailyAllowance));
+  dailyEl.textContent = (dailyAllowance < 0 ? '-£' : '£') + fmt(Math.abs(dailyAllowance)) + '/day';
   dailyEl.className = 'big-number ' + (dailyAllowance >= 0 ? 'positive' : 'negative');
   const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-  let detail = `£${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'to spend'} over ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr}).`;
+  let detail = `That's £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'left'} spread across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
   if (unpaidBillsTotal > 0) {
-    detail += ` Includes leaving £${fmt(unpaidBillsTotal)} for unpaid bills this cycle.`;
+    detail += `, after holding back £${fmt(unpaidBillsTotal)} for bills still due this cycle.`;
+  } else {
+    detail += '.';
   }
   document.getElementById('dailyAllowanceDetail').textContent = detail;
 
@@ -2192,6 +2307,164 @@ function renderHome() {
   } else {
     recentEl.innerHTML = recent.map(t => txItemHTML(t)).join('');
   }
+
+  // Pace tracker: where are we in the cycle vs how much we've spent?
+  renderPace(cycle, daysToPayday, availableToSpend, monthOut);
+  // Quick log buttons
+  renderQuickLog();
+  // Payday recap (only show if it's actually payday or just after)
+  renderPaydayRecap();
+}
+
+function renderPace(cycle, daysToPayday, availableToSpend, monthOut) {
+  // Figure out: start of cycle (last working day of previous month) -> end (last working day of current cycle month)
+  const [cy, cm] = cycle.split('-').map(Number);
+  const cycleStart = lastWorkingDay(cy, cm - 2); // previous month's LWD (cm is 1-indexed, JS is 0)
+  const cycleEnd = lastWorkingDay(cy, cm - 1);
+  const today = new Date();
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const totalDays = Math.max(1, Math.ceil((cycleEnd - cycleStart) / 86400000));
+  const elapsedDays = Math.max(0, Math.min(totalDays, Math.ceil((todayMid - cycleStart) / 86400000)));
+  const timePct = Math.round((elapsedDays / totalDays) * 100);
+
+  // Spending used: out of (out + available) i.e. the total "budget" for variable spend
+  const cycleBudget = monthOut + availableToSpend; // what was available at cycle start
+  const spendPct = cycleBudget > 0 ? Math.round((monthOut / cycleBudget) * 100) : 0;
+
+  document.getElementById('paceSubtitle').textContent =
+    `Day ${elapsedDays} of ${totalDays} in this cycle · ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday`;
+  document.getElementById('paceTimeText').textContent = timePct + '%';
+  document.getElementById('paceTimeFill').style.width = Math.min(100, timePct) + '%';
+  document.getElementById('paceSpendText').textContent = spendPct + '%';
+  document.getElementById('paceSpendFill').style.width = Math.min(100, spendPct) + '%';
+
+  // Verdict
+  const spendFill = document.getElementById('paceSpendFill');
+  spendFill.className = 'pace-fill pace-spend';
+  let verdict = '';
+  if (spendPct === 0 && timePct === 0) {
+    verdict = 'Fresh cycle.';
+  } else if (spendPct <= timePct - 10) {
+    spendFill.classList.add('ok');
+    verdict = `Ahead of pace — you've spent ${spendPct}% but only ${timePct}% of the cycle has passed.`;
+  } else if (spendPct <= timePct + 10) {
+    spendFill.classList.add('ok');
+    verdict = `On track — spending is roughly in step with the cycle.`;
+  } else if (spendPct <= 100) {
+    spendFill.classList.add('warn');
+    verdict = `Spending ahead of pace — ${spendPct}% spent, ${timePct}% through the cycle.`;
+  } else {
+    spendFill.classList.add('over');
+    verdict = `Over budget — ${spendPct}% of your variable budget used.`;
+  }
+  document.getElementById('paceVerdict').textContent = verdict;
+}
+
+function renderQuickLog() {
+  const el = document.getElementById('quickLogGrid');
+  if (!state.quickLogs || state.quickLogs.length === 0) {
+    el.innerHTML = '<div class="empty">No quick logs yet. Add some in Settings.</div>';
+    return;
+  }
+  el.innerHTML = state.quickLogs.map(q => `
+    <button class="quick-log-btn" onclick="quickLog(${q.id})">
+      <span class="ql-name">${escapeHtml(q.name)}</span>
+      <span class="ql-amt">£${fmt(q.amount)}</span>
+    </button>
+  `).join('');
+}
+
+function quickLog(id) {
+  const ql = state.quickLogs.find(q => q.id === id);
+  if (!ql) return;
+  // Open the tx modal pre-filled
+  openModal('tx');
+  // Force "out" type
+  currentTxType = 'out';
+  updateTxSeg();
+  updateTxDepositVisibility();
+  document.getElementById('txAmount').value = ql.amount;
+  document.getElementById('txDesc').value = ql.name;
+  document.getElementById('txDate').value = todayStr();
+  document.getElementById('txCategory').value = ql.category;
+}
+
+function renderPaydayRecap() {
+  const card = document.getElementById('paydayRecapCard');
+  // Show recap on payday OR the day after (gives time to catch it)
+  const today = new Date();
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const lwd = lastWorkingDay(today.getFullYear(), today.getMonth());
+  const dayAfter = new Date(lwd);
+  dayAfter.setDate(dayAfter.getDate() + 1);
+
+  const shouldShow = (todayMid.getTime() === lwd.getTime()) || (todayMid.getTime() === dayAfter.getTime());
+  // Cycle we're recapping = the cycle that just ended (i.e. current calendar month if payday today)
+  const cycleKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  if (!shouldShow || (state.dismissedRecaps && state.dismissedRecaps.includes(cycleKey))) {
+    card.style.display = 'none';
+    return;
+  }
+
+  // Sum up the cycle just ending
+  let recapIn = 0, recapOut = 0, recapSaved = 0;
+  state.transactions.forEach(t => {
+    if (payCycleForStr(t.date) === cycleKey) {
+      if (t.type === 'in') recapIn += t.amount;
+      else if (t.type === 'out') recapOut += t.amount;
+      else if (t.type === 'save') recapSaved += t.amount;
+    }
+  });
+  const leftover = recapIn - recapOut - recapSaved;
+
+  card.style.display = 'block';
+  document.getElementById('paydayRecapSubtitle').textContent =
+    `${new Date(cycleKey + '-01').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} cycle wrapped`;
+  document.getElementById('recapIn').textContent = fmtMoney(recapIn);
+  document.getElementById('recapOut').textContent = fmtMoney(recapOut);
+  document.getElementById('recapSaved').textContent = fmtMoney(recapSaved);
+  const leftEl = document.getElementById('recapLeftover');
+  leftEl.textContent = (leftover < 0 ? '-£' : '£') + fmt(Math.abs(leftover));
+  leftEl.className = 'stat-value ' + (leftover >= 0 ? 'positive' : 'negative');
+
+  const action = document.getElementById('recapAction');
+  if (leftover > 0) {
+    action.innerHTML = `
+      <p class="subtitle" style="margin-bottom: 10px;">You finished with £${fmt(leftover)} left over. Move it to the wedding fund?</p>
+      <button class="btn btn-primary btn-full" onclick="moveLeftoverToFund(${leftover}, '${cycleKey}')">Move £${fmt(leftover)} to wedding fund</button>
+    `;
+  } else if (leftover < 0) {
+    action.innerHTML = `<p class="subtitle">You went £${fmt(Math.abs(leftover))} over this cycle. Worth a look at where it went.</p>`;
+  } else {
+    action.innerHTML = `<p class="subtitle">Bang on £0 leftover — break-even cycle.</p>`;
+  }
+}
+
+function moveLeftoverToFund(amount, cycleKey) {
+  state.transactions.push({
+    id: Date.now(),
+    type: 'save',
+    amount,
+    desc: `Carry-over from ${new Date(cycleKey + '-01').toLocaleDateString('en-GB', { month: 'long' })}`,
+    date: todayStr(),
+    deposit: 0,
+    category: 'Savings',
+    billId: null
+  });
+  if (!state.dismissedRecaps) state.dismissedRecaps = [];
+  state.dismissedRecaps.push(cycleKey);
+  save();
+  renderAll();
+}
+
+function dismissRecap() {
+  const today = new Date();
+  const cycleKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  if (!state.dismissedRecaps) state.dismissedRecaps = [];
+  state.dismissedRecaps.push(cycleKey);
+  save();
+  document.getElementById('paydayRecapCard').style.display = 'none';
 }
 
 function renderSorter() {
@@ -2573,6 +2846,48 @@ function renderSettings() {
   document.getElementById('setRate').value = state.eurRate;
   document.getElementById('setSalary').value = state.typicalSalary || '';
   document.getElementById('setChay').value = state.typicalChay || '';
+  renderQuickLogSettings();
+}
+
+function renderQuickLogSettings() {
+  const el = document.getElementById('quickLogList');
+  if (!el) return;
+  if (!state.quickLogs || state.quickLogs.length === 0) {
+    el.innerHTML = '<div class="empty">No shortcuts yet.</div>';
+    return;
+  }
+  el.innerHTML = state.quickLogs.map(q => `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(q.name)}</div>
+        <div class="item-meta">${escapeHtml(q.category)} · £${fmt(q.amount)}</div>
+      </div>
+      <button class="item-del" onclick="deleteQuickLog(${q.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function addQuickLog() {
+  const name = prompt('What\'s this shortcut for? (e.g. Groceries, Petrol, Coffee)');
+  if (!name) return;
+  const amountStr = prompt('Typical amount (£)?');
+  const amount = parseFloat(amountStr);
+  if (isNaN(amount) || amount <= 0) { alert('Invalid amount'); return; }
+  const category = prompt('Category? (Groceries, Eating out, Shopping, Transport, Entertainment, Holidays, Bills, General)', 'General');
+  if (!category) return;
+  const id = (state.quickLogs.reduce((m, q) => Math.max(m, q.id), 0) || 0) + 1;
+  state.quickLogs.push({ id, name, category, amount });
+  save();
+  renderQuickLogSettings();
+  renderHome();
+}
+
+function deleteQuickLog(id) {
+  if (!confirm('Remove this shortcut?')) return;
+  state.quickLogs = state.quickLogs.filter(q => q.id !== id);
+  save();
+  renderQuickLogSettings();
+  renderHome();
 }
 
 function saveSettings() {
@@ -2867,7 +3182,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v9
+  el.textContent = `VERSION: v12
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
