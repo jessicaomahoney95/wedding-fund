@@ -1084,14 +1084,14 @@
 
   <div class="card" id="christmasCard">
     <h2>Christmas savings</h2>
-    <p class="subtitle" id="christmasSubtitle">Round-ups going to your Christmas pot</p>
+    <p class="subtitle">Tap the total to update it</p>
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-label">This cycle</div>
+        <div class="stat-label">Round-ups this cycle</div>
         <div class="stat-value" id="christmasCycle">£0</div>
       </div>
-      <div class="stat">
-        <div class="stat-label">All time</div>
+      <div class="stat" onclick="editChristmasBalance()" style="cursor: pointer;">
+        <div class="stat-label">Current balance</div>
         <div class="stat-value" id="christmasTotal">£0</div>
       </div>
     </div>
@@ -1451,7 +1451,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v15 · duplicate ID fix + Christmas start balance</p>
+    <p class="subtitle">Version: v17 · Christmas balance includes logged round-ups</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1640,7 +1640,7 @@ const defaultState = {
   eurRate: 1.17,
   typicalSalary: 0,
   typicalChay: 0,
-  christmasStart: 277.15,
+  christmasStart: 260.81,
   transactions: [
     {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
     {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
@@ -2151,6 +2151,7 @@ function saveTx() {
           category: 'Savings',
           billId: null
         });
+        // No need to bump christmasStart — renderChristmas adds logged round-ups automatically
         save();
         renderAll();
       }
@@ -2394,21 +2395,43 @@ function renderHome() {
 }
 
 function renderChristmas(cycle) {
-  // Any 'out' transaction with category 'Savings' is a round-up to Christmas pot
+  // Round-ups logged in the app, both this cycle and all-time
   let cycleTotal = 0;
-  let allTime = 0;
+  let allLogged = 0;
   state.transactions.forEach(t => {
     if (t.type === 'out' && t.category === 'Savings') {
-      allTime += t.amount;
+      allLogged += t.amount;
       if (payCycleForStr(t.date) === cycle) cycleTotal += t.amount;
     }
   });
-  // Add starting balance from settings
-  const startBalance = state.christmasStart || 0;
+  // Baseline = what's in the pot before any app-logged round-ups
+  const baseline = state.christmasStart || 0;
+  const currentBalance = baseline + allLogged;
   const cycleEl = document.getElementById('christmasCycle');
   const totalEl = document.getElementById('christmasTotal');
   if (cycleEl) cycleEl.textContent = fmtMoney(cycleTotal);
-  if (totalEl) totalEl.textContent = fmtMoney(allTime + startBalance);
+  if (totalEl) totalEl.textContent = fmtMoney(currentBalance);
+}
+
+function editChristmasBalance() {
+  // The displayed total = baseline + logged round-ups.
+  // We let the user edit the DISPLAYED total. To do that, we set baseline = newTotal - logged.
+  let logged = 0;
+  state.transactions.forEach(t => {
+    if (t.type === 'out' && t.category === 'Savings') logged += t.amount;
+  });
+  const current = (state.christmasStart || 0) + logged;
+  const newStr = prompt(`Update your Christmas pot balance. Currently £${fmt(current)}.\n\nEnter the actual balance shown in Monzo:`, current.toFixed(2));
+  if (newStr === null) return;
+  const newBalance = parseFloat(newStr);
+  if (isNaN(newBalance) || newBalance < 0) {
+    alert('Invalid amount');
+    return;
+  }
+  // Adjust baseline so total = newBalance
+  state.christmasStart = newBalance - logged;
+  save();
+  renderAll();
 }
 
 function renderPace(cycle, daysToPayday, availableToSpend, monthOut) {
@@ -3284,7 +3307,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v15
+  el.textContent = `VERSION: v17
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
