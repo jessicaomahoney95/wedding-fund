@@ -1395,11 +1395,24 @@ let currentBillAccount = 'joint';
 function load() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return { ...defaultState, ...JSON.parse(saved) };
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Only use defaultState.bills if user hasn't customised them
+      return { ...defaultState, ...parsed };
+    }
+    // Migrate v1 — but only take selected fields, never empty bills
     const v1 = localStorage.getItem('wedding-fund-jess-v1');
     if (v1) {
       const old = JSON.parse(v1);
-      return { ...defaultState, ...old, wishlist: [] };
+      const migrated = { ...defaultState };
+      if (old.goal) migrated.goal = old.goal;
+      if (old.deposit) migrated.deposit = old.deposit;
+      if (old.weddingDate) migrated.weddingDate = old.weddingDate;
+      if (old.depositDate) migrated.depositDate = old.depositDate;
+      if (old.eurRate) migrated.eurRate = old.eurRate;
+      if (old.transactions && old.transactions.length) migrated.transactions = old.transactions;
+      if (old.bills && old.bills.length) migrated.bills = old.bills;
+      return migrated;
     }
   } catch (e) {}
   return { ...defaultState };
@@ -2126,7 +2139,9 @@ function resetAll() {
   if (!confirm('This deletes everything. Are you sure?')) return;
   if (!confirm('Really sure? This cannot be undone.')) return;
   localStorage.removeItem(STORAGE_KEY);
-  state = { ...defaultState };
+  localStorage.removeItem('wedding-fund-jess-v1');
+  // Deep clone the default state so we get a fresh copy of bills
+  state = JSON.parse(JSON.stringify(defaultState));
   save();
   renderAll();
   renderSettings();
