@@ -684,6 +684,39 @@
   .sort-amount.out { color: var(--rust); }
   .sort-amount.save { color: var(--blue-mid); }
 
+  .daily-allowance {
+    margin: 12px 0;
+    padding: 14px;
+    background: var(--sand-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--gold);
+    display: none;
+  }
+
+  .daily-allowance.show { display: block; }
+
+  .daily-allowance-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .daily-allowance-amount {
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .daily-allowance-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
   .sorter-hint {
     padding: 10px 12px;
     background: var(--sand-light);
@@ -924,6 +957,7 @@
         <div class="sort-amount" id="sortLeftover">£0</div>
       </div>
     </div>
+    <div class="daily-allowance" id="dailyAllowance"></div>
     <div class="sorter-hint" id="sorterHint"></div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="useTypicalSalary()">Use typical</button>
@@ -1556,6 +1590,25 @@ function renderSorter() {
   document.getElementById('sortBills').textContent = '£' + fmt(billsTotal);
   document.getElementById('sortWedding').textContent = '£' + fmt(toWedding);
   document.getElementById('sortLeftover').textContent = '£' + fmt(leftover);
+
+  // Daily allowance — leftover divided by days remaining in the month
+  const dailyEl = document.getElementById('dailyAllowance');
+  if (leftover > 0) {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const today = now.getDate();
+    const daysLeft = Math.max(1, lastDay - today + 1);
+    const perDay = leftover / daysLeft;
+    dailyEl.className = 'daily-allowance show';
+    dailyEl.innerHTML = `
+      <div class="daily-allowance-label">Daily spend allowance</div>
+      <div class="daily-allowance-amount">£${fmt(perDay)}/day</div>
+      <div class="daily-allowance-note">£${fmt(leftover)} leftover ÷ ${daysLeft} days left this month</div>
+    `;
+  } else {
+    dailyEl.className = 'daily-allowance';
+    dailyEl.innerHTML = '';
+  }
 
   // Breakdown line
   const parts = [];
