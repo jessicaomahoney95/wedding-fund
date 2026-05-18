@@ -825,6 +825,7 @@
   .tag.account-chay { background: var(--accent); color: var(--sand-light); }
   .tag.varies { background: var(--gold); color: var(--sand-light); }
   .tag.paid { background: var(--olive); color: var(--sand-light); }
+  .tag.billmatch { background: rgba(124, 142, 114, 0.2); color: var(--olive); font-style: italic; }
 
   .item.bill-paid {
     opacity: 0.55;
@@ -1475,148 +1476,148 @@ const defaultState = {
   typicalSalary: 0,
   typicalChay: 0,
   transactions: [
-    {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income"},
-    {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income"},
-    {"id": 1777507200005, "type": "out", "amount": 17.61, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
-    {"id": 1777507200006, "type": "out", "amount": 0.39, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200007, "type": "out", "amount": 30.37, "desc": "D R Luckhurst Butchers", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
-    {"id": 1777507200008, "type": "out", "amount": 0.63, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200009, "type": "out", "amount": 10.97, "desc": "Aldi", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
-    {"id": 1777507200010, "type": "out", "amount": 0.03, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200011, "type": "out", "amount": 4.24, "desc": "Hazells Convenience St", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
-    {"id": 1777507200012, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200013, "type": "out", "amount": 16.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
-    {"id": 1777507200014, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200015, "type": "out", "amount": 12.0, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
-    {"id": 1777507200016, "type": "out", "amount": 15.39, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
-    {"id": 1777507200017, "type": "out", "amount": 0.61, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200018, "type": "out", "amount": 8.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping"},
-    {"id": 1777507200019, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777507200020, "type": "out", "amount": 3.87, "desc": "Milk & More", "date": "2026-04-30", "deposit": 0, "category": "Groceries"},
-    {"id": 1777507200021, "type": "out", "amount": 0.13, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings"},
-    {"id": 1777593600023, "type": "out", "amount": 100.0, "desc": "65 CHURCH RD TENANTS ASSOC", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600025, "type": "out", "amount": 1223.07, "desc": "Halifax", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600027, "type": "out", "amount": 173.0, "desc": "Hbc Council Tax", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600029, "type": "out", "amount": 100.0, "desc": "Southern Water", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600030, "type": "out", "amount": 10.0, "desc": "Novuna Personal Finance", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600032, "type": "out", "amount": 153.73, "desc": "Octopus Energy", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600033, "type": "out", "amount": 12.65, "desc": "Murco Costcutter", "date": "2026-05-01", "deposit": 0, "category": "Transport"},
-    {"id": 1777593600034, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings"},
-    {"id": 1777593600035, "type": "out", "amount": 120.0, "desc": "Shirley Lewis", "date": "2026-05-01", "deposit": 0, "category": "Bills"},
-    {"id": 1777593600036, "type": "out", "amount": 4.96, "desc": "Western Road Store Con", "date": "2026-05-01", "deposit": 0, "category": "Groceries"},
-    {"id": 1777593600037, "type": "out", "amount": 0.04, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings"},
-    {"id": 1777593600038, "type": "out", "amount": 4.95, "desc": "Jempsons Supermarkets", "date": "2026-05-01", "deposit": 0, "category": "Groceries"},
-    {"id": 1777593600039, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings"},
-    {"id": 1777593600040, "type": "out", "amount": 42.9, "desc": "Taj Mahkhal", "date": "2026-05-01", "deposit": 0, "category": "Eating out"},
-    {"id": 1777593600041, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings"},
-    {"id": 1777680000042, "type": "in", "amount": 1400.0, "desc": "Antony White", "date": "2026-05-02", "deposit": 0, "category": "Income"},
-    {"id": 1777680000043, "type": "out", "amount": 14.7, "desc": "Poppyseed Bakery 3", "date": "2026-05-02", "deposit": 0, "category": "Groceries"},
-    {"id": 1777680000044, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings"},
-    {"id": 1777680000045, "type": "out", "amount": 7.99, "desc": "The Rest Is History", "date": "2026-05-02", "deposit": 0, "category": "Shopping"},
-    {"id": 1777680000046, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings"},
-    {"id": 1777680000047, "type": "out", "amount": 19.99, "desc": "Amazon", "date": "2026-05-02", "deposit": 0, "category": "Shopping"},
-    {"id": 1777680000048, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings"},
-    {"id": 1777766400049, "type": "out", "amount": 29.0, "desc": "Balfour And By", "date": "2026-05-03", "deposit": 0, "category": "Shopping"},
-    {"id": 1777766400050, "type": "out", "amount": 8.0, "desc": "Hastings Tradi", "date": "2026-05-03", "deposit": 0, "category": "Shopping"},
-    {"id": 1777766400051, "type": "out", "amount": 65.0, "desc": "Leigh Gallery", "date": "2026-05-03", "deposit": 0, "category": "Shopping"},
-    {"id": 1777766400052, "type": "out", "amount": 6.9, "desc": "Grace & Favour", "date": "2026-05-03", "deposit": 0, "category": "Shopping"},
-    {"id": 1777766400053, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings"},
-    {"id": 1777766400054, "type": "out", "amount": 80.52, "desc": "The New Inn", "date": "2026-05-03", "deposit": 0, "category": "Eating out"},
-    {"id": 1777766400055, "type": "out", "amount": 0.48, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings"},
-    {"id": 1777852800056, "type": "out", "amount": 13.0, "desc": "Da Romeo", "date": "2026-05-04", "deposit": 0, "category": "Eating out"},
-    {"id": 1777852800057, "type": "out", "amount": 18.0, "desc": "Creams", "date": "2026-05-04", "deposit": 0, "category": "Eating out"},
-    {"id": 1777852800058, "type": "out", "amount": 4.0, "desc": "Sip & Savour", "date": "2026-05-04", "deposit": 0, "category": "Eating out"},
-    {"id": 1777852800059, "type": "out", "amount": 5.99, "desc": "Disney+", "date": "2026-05-04", "deposit": 0, "category": "Bills"},
-    {"id": 1777852800060, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-04", "deposit": 0, "category": "Savings"},
-    {"id": 1777939200062, "type": "out", "amount": 828.59, "desc": "The Mortgage Works", "date": "2026-05-05", "deposit": 0, "category": "Bills"},
-    {"id": 1777939200063, "type": "out", "amount": 69.68, "desc": "Tesco", "date": "2026-05-05", "deposit": 0, "category": "Groceries"},
-    {"id": 1777939200064, "type": "out", "amount": 0.32, "desc": "Christmas Savings  Pot", "date": "2026-05-05", "deposit": 0, "category": "Savings"},
-    {"id": 1777939200065, "type": "out", "amount": 12.0, "desc": "Wickes", "date": "2026-05-05", "deposit": 0, "category": "Shopping"},
-    {"id": 1778025600066, "type": "out", "amount": 7.84, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping"},
-    {"id": 1778025600067, "type": "out", "amount": 0.16, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings"},
-    {"id": 1778025600068, "type": "out", "amount": 86.1, "desc": "Murco Costcutter", "date": "2026-05-06", "deposit": 0, "category": "Transport"},
-    {"id": 1778025600069, "type": "out", "amount": 0.9, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings"},
-    {"id": 1778025600070, "type": "out", "amount": 3.2, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping"},
-    {"id": 1778025600071, "type": "out", "amount": 0.8, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings"},
-    {"id": 1778112000072, "type": "out", "amount": 9.0, "desc": "SMARTY", "date": "2026-05-07", "deposit": 0, "category": "Bills"},
-    {"id": 1778112000074, "type": "out", "amount": 6.81, "desc": "Milk & More", "date": "2026-05-07", "deposit": 0, "category": "Groceries"},
-    {"id": 1778112000075, "type": "out", "amount": 0.19, "desc": "Christmas Savings  Pot", "date": "2026-05-07", "deposit": 0, "category": "Savings"},
-    {"id": 1778198400076, "type": "out", "amount": 58.32, "desc": "Harrington's Pet Food", "date": "2026-05-08", "deposit": 0, "category": "General"},
-    {"id": 1778198400077, "type": "out", "amount": 0.68, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings"},
-    {"id": 1778198400078, "type": "out", "amount": 32.4, "desc": "Train Pal", "date": "2026-05-08", "deposit": 0, "category": "Holidays"},
-    {"id": 1778198400079, "type": "out", "amount": 0.6, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings"},
-    {"id": 1778284800080, "type": "out", "amount": 7.0, "desc": "Jerk And Bean", "date": "2026-05-09", "deposit": 0, "category": "Eating out"},
-    {"id": 1778284800081, "type": "out", "amount": 14.25, "desc": "The Sleeper St", "date": "2026-05-09", "deposit": 0, "category": "Eating out"},
-    {"id": 1778284800082, "type": "out", "amount": 0.75, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings"},
-    {"id": 1778284800083, "type": "out", "amount": 28.0, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General"},
-    {"id": 1778284800084, "type": "out", "amount": 97.8, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General"},
-    {"id": 1778284800085, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings"},
-    {"id": 1778284800086, "type": "out", "amount": 15.0, "desc": "Edward Bulmer Natural Paint", "date": "2026-05-09", "deposit": 0, "category": "Shopping"},
-    {"id": 1778284800087, "type": "out", "amount": 20.65, "desc": "Aldi", "date": "2026-05-09", "deposit": 0, "category": "Groceries"},
-    {"id": 1778284800088, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings"},
-    {"id": 1778284800089, "type": "out", "amount": 3.85, "desc": "Tesco", "date": "2026-05-09", "deposit": 0, "category": "Groceries"},
-    {"id": 1778284800090, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings"},
-    {"id": 1778371200091, "type": "out", "amount": 2.49, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping"},
-    {"id": 1778371200092, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings"},
-    {"id": 1778371200093, "type": "out", "amount": 154.88, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping"},
-    {"id": 1778371200094, "type": "out", "amount": 0.12, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings"},
-    {"id": 1778544000095, "type": "out", "amount": 2.0, "desc": "Nayax Janet And John", "date": "2026-05-12", "deposit": 0, "category": "Entertainment"},
-    {"id": 1778544000096, "type": "out", "amount": 3.95, "desc": "Snowdon Mountain Railway", "date": "2026-05-12", "deposit": 0, "category": "Entertainment"},
-    {"id": 1778544000097, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings"},
-    {"id": 1778544000098, "type": "out", "amount": 5.5, "desc": "Amazon", "date": "2026-05-12", "deposit": 0, "category": "Shopping"},
-    {"id": 1778544000099, "type": "out", "amount": 0.5, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings"},
-    {"id": 1778630400100, "type": "out", "amount": 5.18, "desc": "McDonald\u2019s", "date": "2026-05-13", "deposit": 0, "category": "Eating out"},
-    {"id": 1778630400101, "type": "out", "amount": 0.82, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings"},
-    {"id": 1778630400103, "type": "out", "amount": 3.8, "desc": "Hazells Convenience St", "date": "2026-05-13", "deposit": 0, "category": "Groceries"},
-    {"id": 1778630400104, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings"},
-    {"id": 1778716800105, "type": "out", "amount": 31.77, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
-    {"id": 1778716800106, "type": "out", "amount": 0.23, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
-    {"id": 1778716800107, "type": "out", "amount": 3.85, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
-    {"id": 1778716800108, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
-    {"id": 1778716800110, "type": "out", "amount": 9.75, "desc": "Milk & More", "date": "2026-05-14", "deposit": 0, "category": "Groceries"},
-    {"id": 1778716800111, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings"},
-    {"id": 1778803200112, "type": "out", "amount": 35.75, "desc": "24|7 Home Rescue", "date": "2026-05-15", "deposit": 0, "category": "Bills"},
-    {"id": 1778803200113, "type": "out", "amount": 26.0, "desc": "Lightningfibre", "date": "2026-05-15", "deposit": 0, "category": "Bills"},
-    {"id": 1778803200115, "type": "out", "amount": 3.95, "desc": "Hazells Convenience St", "date": "2026-05-15", "deposit": 0, "category": "Groceries"},
-    {"id": 1778803200116, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-15", "deposit": 0, "category": "Savings"},
-    {"id": 1778889600117, "type": "out", "amount": 4.7, "desc": "Tesco", "date": "2026-05-16", "deposit": 0, "category": "Groceries"},
-    {"id": 1778889600118, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings"},
-    {"id": 1778889600119, "type": "out", "amount": 71.58, "desc": "Cheese & Delicatessen", "date": "2026-05-16", "deposit": 0, "category": "Groceries"},
-    {"id": 1778889600120, "type": "out", "amount": 0.42, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings"},
-    {"id": 1778889600121, "type": "in", "amount": 23.86, "desc": "W Baxter", "date": "2026-05-16", "deposit": 0, "category": "Income"},
-    {"id": 1778889600122, "type": "out", "amount": 27.24, "desc": "Aldi", "date": "2026-05-16", "deposit": 0, "category": "Groceries"},
-    {"id": 1778889600123, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings"},
-    {"id": 1778976000127, "type": "out", "amount": 10.8, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out"},
-    {"id": 1778976000128, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
-    {"id": 1778976000129, "type": "out", "amount": 9.9, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out"},
-    {"id": 1778976000130, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
-    {"id": 1778976000131, "type": "out", "amount": 10.14, "desc": "Hazells Convenience St", "date": "2026-05-17", "deposit": 0, "category": "Groceries"},
-    {"id": 1778976000132, "type": "out", "amount": 0.86, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
-    {"id": 1778976000133, "type": "out", "amount": 1.75, "desc": "Amazon", "date": "2026-05-17", "deposit": 0, "category": "Shopping"},
-    {"id": 1778976000134, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings"},
-    {"id": 1779062400135, "type": "out", "amount": 27.67, "desc": "O2", "date": "2026-05-18", "deposit": 0, "category": "Bills"},
-    {"id": 1779062400137, "type": "out", "amount": 8.55, "desc": "J Andersen Limited", "date": "2026-05-18", "deposit": 0, "category": "General"},
-    {"id": 1779062400138, "type": "out", "amount": 0.45, "desc": "Christmas Savings  Pot", "date": "2026-05-18", "deposit": 0, "category": "Savings"}
+    {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777507200005, "type": "out", "amount": 17.61, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200006, "type": "out", "amount": 0.39, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200007, "type": "out", "amount": 30.37, "desc": "D R Luckhurst Butchers", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200008, "type": "out", "amount": 0.63, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200009, "type": "out", "amount": 10.97, "desc": "Aldi", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200010, "type": "out", "amount": 0.03, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200011, "type": "out", "amount": 4.24, "desc": "Hazells Convenience St", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200012, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200013, "type": "out", "amount": 16.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200014, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200015, "type": "out", "amount": 12.0, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200016, "type": "out", "amount": 15.39, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200017, "type": "out", "amount": 0.61, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200018, "type": "out", "amount": 8.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200019, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200020, "type": "out", "amount": 3.87, "desc": "Milk & More", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200021, "type": "out", "amount": 0.13, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600023, "type": "out", "amount": 100.0, "desc": "65 CHURCH RD TENANTS ASSOC", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 8},
+    {"id": 1777593600025, "type": "out", "amount": 1223.07, "desc": "Halifax", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 1},
+    {"id": 1777593600027, "type": "out", "amount": 173.0, "desc": "Hbc Council Tax", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 2},
+    {"id": 1777593600029, "type": "out", "amount": 100.0, "desc": "Southern Water", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 4},
+    {"id": 1777593600030, "type": "out", "amount": 10.0, "desc": "Novuna Personal Finance", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 5},
+    {"id": 1777593600032, "type": "out", "amount": 153.73, "desc": "Octopus Energy", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 6},
+    {"id": 1777593600033, "type": "out", "amount": 12.65, "desc": "Murco Costcutter", "date": "2026-05-01", "deposit": 0, "category": "Transport", "billId": null},
+    {"id": 1777593600034, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600035, "type": "out", "amount": 120.0, "desc": "Shirley Lewis", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 7},
+    {"id": 1777593600036, "type": "out", "amount": 4.96, "desc": "Western Road Store Con", "date": "2026-05-01", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777593600037, "type": "out", "amount": 0.04, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600038, "type": "out", "amount": 4.95, "desc": "Jempsons Supermarkets", "date": "2026-05-01", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777593600039, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600040, "type": "out", "amount": 42.9, "desc": "Taj Mahkhal", "date": "2026-05-01", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777593600041, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000042, "type": "in", "amount": 1400.0, "desc": "Antony White", "date": "2026-05-02", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777680000043, "type": "out", "amount": 14.7, "desc": "Poppyseed Bakery 3", "date": "2026-05-02", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777680000044, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000045, "type": "out", "amount": 7.99, "desc": "The Rest Is History", "date": "2026-05-02", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777680000046, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000047, "type": "out", "amount": 19.99, "desc": "Amazon", "date": "2026-05-02", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777680000048, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777766400049, "type": "out", "amount": 29.0, "desc": "Balfour And By", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400050, "type": "out", "amount": 8.0, "desc": "Hastings Tradi", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400051, "type": "out", "amount": 65.0, "desc": "Leigh Gallery", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400052, "type": "out", "amount": 6.9, "desc": "Grace & Favour", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400053, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777766400054, "type": "out", "amount": 80.52, "desc": "The New Inn", "date": "2026-05-03", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777766400055, "type": "out", "amount": 0.48, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777852800056, "type": "out", "amount": 13.0, "desc": "Da Romeo", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800057, "type": "out", "amount": 18.0, "desc": "Creams", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800058, "type": "out", "amount": 4.0, "desc": "Sip & Savour", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800059, "type": "out", "amount": 5.99, "desc": "Disney+", "date": "2026-05-04", "deposit": 0, "category": "Bills", "billId": 10},
+    {"id": 1777852800060, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-04", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777939200062, "type": "out", "amount": 828.59, "desc": "The Mortgage Works", "date": "2026-05-05", "deposit": 0, "category": "Bills", "billId": 12},
+    {"id": 1777939200063, "type": "out", "amount": 69.68, "desc": "Tesco", "date": "2026-05-05", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777939200064, "type": "out", "amount": 0.32, "desc": "Christmas Savings  Pot", "date": "2026-05-05", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777939200065, "type": "out", "amount": 12.0, "desc": "Wickes", "date": "2026-05-05", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600066, "type": "out", "amount": 7.84, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600067, "type": "out", "amount": 0.16, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778025600068, "type": "out", "amount": 86.1, "desc": "Murco Costcutter", "date": "2026-05-06", "deposit": 0, "category": "Transport", "billId": null},
+    {"id": 1778025600069, "type": "out", "amount": 0.9, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778025600070, "type": "out", "amount": 3.2, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600071, "type": "out", "amount": 0.8, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778112000072, "type": "out", "amount": 9.0, "desc": "SMARTY", "date": "2026-05-07", "deposit": 0, "category": "Bills", "billId": 13},
+    {"id": 1778112000074, "type": "out", "amount": 6.81, "desc": "Milk & More", "date": "2026-05-07", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778112000075, "type": "out", "amount": 0.19, "desc": "Christmas Savings  Pot", "date": "2026-05-07", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778198400076, "type": "out", "amount": 58.32, "desc": "Harrington's Pet Food", "date": "2026-05-08", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778198400077, "type": "out", "amount": 0.68, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778198400078, "type": "out", "amount": 32.4, "desc": "Train Pal", "date": "2026-05-08", "deposit": 0, "category": "Holidays", "billId": null},
+    {"id": 1778198400079, "type": "out", "amount": 0.6, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800080, "type": "out", "amount": 7.0, "desc": "Jerk And Bean", "date": "2026-05-09", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778284800081, "type": "out", "amount": 14.25, "desc": "The Sleeper St", "date": "2026-05-09", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778284800082, "type": "out", "amount": 0.75, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800083, "type": "out", "amount": 28.0, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778284800084, "type": "out", "amount": 97.8, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778284800085, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800086, "type": "out", "amount": 15.0, "desc": "Edward Bulmer Natural Paint", "date": "2026-05-09", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778284800087, "type": "out", "amount": 20.65, "desc": "Aldi", "date": "2026-05-09", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778284800088, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800089, "type": "out", "amount": 3.85, "desc": "Tesco", "date": "2026-05-09", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778284800090, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778371200091, "type": "out", "amount": 2.49, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778371200092, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778371200093, "type": "out", "amount": 154.88, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778371200094, "type": "out", "amount": 0.12, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778544000095, "type": "out", "amount": 2.0, "desc": "Nayax Janet And John", "date": "2026-05-12", "deposit": 0, "category": "Entertainment", "billId": null},
+    {"id": 1778544000096, "type": "out", "amount": 3.95, "desc": "Snowdon Mountain Railway", "date": "2026-05-12", "deposit": 0, "category": "Entertainment", "billId": null},
+    {"id": 1778544000097, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778544000098, "type": "out", "amount": 5.5, "desc": "Amazon", "date": "2026-05-12", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778544000099, "type": "out", "amount": 0.5, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778630400100, "type": "out", "amount": 5.18, "desc": "McDonald\u2019s", "date": "2026-05-13", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778630400101, "type": "out", "amount": 0.82, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778630400103, "type": "out", "amount": 3.8, "desc": "Hazells Convenience St", "date": "2026-05-13", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778630400104, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800105, "type": "out", "amount": 31.77, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800106, "type": "out", "amount": 0.23, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800107, "type": "out", "amount": 3.85, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800108, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800110, "type": "out", "amount": 9.75, "desc": "Milk & More", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800111, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778803200112, "type": "out", "amount": 35.75, "desc": "24|7 Home Rescue", "date": "2026-05-15", "deposit": 0, "category": "Bills", "billId": 17},
+    {"id": 1778803200113, "type": "out", "amount": 26.0, "desc": "Lightningfibre", "date": "2026-05-15", "deposit": 0, "category": "Bills", "billId": 16},
+    {"id": 1778803200115, "type": "out", "amount": 3.95, "desc": "Hazells Convenience St", "date": "2026-05-15", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778803200116, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-15", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600117, "type": "out", "amount": 4.7, "desc": "Tesco", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600118, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600119, "type": "out", "amount": 71.58, "desc": "Cheese & Delicatessen", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600120, "type": "out", "amount": 0.42, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600121, "type": "in", "amount": 23.86, "desc": "W Baxter", "date": "2026-05-16", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1778889600122, "type": "out", "amount": 27.24, "desc": "Aldi", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600123, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000127, "type": "out", "amount": 10.8, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778976000128, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000129, "type": "out", "amount": 9.9, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778976000130, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000131, "type": "out", "amount": 10.14, "desc": "Hazells Convenience St", "date": "2026-05-17", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778976000132, "type": "out", "amount": 0.86, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000133, "type": "out", "amount": 1.75, "desc": "Amazon", "date": "2026-05-17", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778976000134, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1779062400135, "type": "out", "amount": 27.67, "desc": "O2", "date": "2026-05-18", "deposit": 0, "category": "Bills", "billId": 18},
+    {"id": 1779062400137, "type": "out", "amount": 8.55, "desc": "J Andersen Limited", "date": "2026-05-18", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1779062400138, "type": "out", "amount": 0.45, "desc": "Christmas Savings  Pot", "date": "2026-05-18", "deposit": 0, "category": "Savings", "billId": null}
   ],
   bills: [
-    { id: 1, name: 'Halifax (home mortgage)', amount: 1223.07, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
-    { id: 2, name: 'Hbc Council Tax', amount: 173.00, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
-    { id: 3, name: 'Aviva', amount: 24.98, cat: 'insurance', day: 1, fixed: 1, account: 'joint' },
-    { id: 4, name: 'Southern Water', amount: 100.00, cat: 'utilities', day: 1, fixed: 0, account: 'joint' },
-    { id: 5, name: 'Novuna Personal Finance', amount: 10.00, cat: 'other', day: 1, fixed: 1, account: 'joint' },
-    { id: 6, name: 'Octopus Energy', amount: 153.73, cat: 'utilities', day: 1, fixed: 0, account: 'joint' },
-    { id: 7, name: 'Shirley Lewis', amount: 120.00, cat: 'other', day: 1, fixed: 1, account: 'joint' },
-    { id: 8, name: '65 Church Rd Tenants Assoc', amount: 100.00, cat: 'housing', day: 1, fixed: 1, account: 'joint' },
-    { id: 9, name: 'Amazon Prime', amount: 8.99, cat: 'subscription', day: 3, fixed: 1, account: 'joint' },
-    { id: 10, name: 'Disney+', amount: 5.99, cat: 'subscription', day: 4, fixed: 1, account: 'joint' },
-    { id: 11, name: 'Apple', amount: 2.99, cat: 'subscription', day: 5, fixed: 1, account: 'joint' },
-    { id: 12, name: 'The Mortgage Works (flat)', amount: 828.59, cat: 'housing', day: 5, fixed: 1, account: 'joint' },
-    { id: 13, name: 'SMARTY', amount: 9.00, cat: 'utilities', day: 7, fixed: 1, account: 'joint' },
-    { id: 14, name: 'Google Storage', amount: 1.59, cat: 'subscription', day: 10, fixed: 1, account: 'joint' },
-    { id: 15, name: 'Apple (extra)', amount: 0.99, cat: 'subscription', day: 13, fixed: 1, account: 'joint' },
-    { id: 16, name: 'Lightningfibre', amount: 26.00, cat: 'utilities', day: 15, fixed: 1, account: 'joint' },
-    { id: 17, name: '24/7 Home Rescue', amount: 35.75, cat: 'insurance', day: 15, fixed: 1, account: 'joint' },
-    { id: 18, name: 'O2', amount: 27.67, cat: 'utilities', day: 18, fixed: 1, account: 'joint' }
+    {"id": 1, "name": "Halifax (home mortgage)", "amount": 1223.07, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 2, "name": "Hbc Council Tax", "amount": 173.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 3, "name": "Aviva", "amount": 24.98, "fixed": 1, "account": "joint", "day": 1, "paidMonths": []},
+    {"id": 4, "name": "Southern Water", "amount": 100.0, "fixed": 0, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 5, "name": "Novuna Personal Finance", "amount": 10.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 6, "name": "Octopus Energy", "amount": 153.73, "fixed": 0, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 7, "name": "Shirley Lewis", "amount": 120.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 8, "name": "65 Church Rd Tenants Assoc", "amount": 100.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 9, "name": "Amazon Prime", "amount": 8.99, "fixed": 1, "account": "joint", "day": 3, "paidMonths": []},
+    {"id": 10, "name": "Disney+", "amount": 5.99, "fixed": 1, "account": "joint", "day": 4, "paidMonths": ["2026-05"]},
+    {"id": 11, "name": "Apple", "amount": 2.99, "fixed": 1, "account": "joint", "day": 5, "paidMonths": []},
+    {"id": 12, "name": "The Mortgage Works (flat)", "amount": 828.59, "fixed": 1, "account": "joint", "day": 5, "paidMonths": ["2026-05"]},
+    {"id": 13, "name": "SMARTY", "amount": 9.0, "fixed": 1, "account": "joint", "day": 7, "paidMonths": ["2026-05"]},
+    {"id": 14, "name": "Google Storage", "amount": 1.59, "fixed": 1, "account": "joint", "day": 10, "paidMonths": []},
+    {"id": 15, "name": "Apple (extra)", "amount": 0.99, "fixed": 1, "account": "joint", "day": 13, "paidMonths": []},
+    {"id": 16, "name": "Lightningfibre", "amount": 26.0, "fixed": 1, "account": "joint", "day": 15, "paidMonths": ["2026-05"]},
+    {"id": 17, "name": "24/7 Home Rescue", "amount": 35.75, "fixed": 1, "account": "joint", "day": 15, "paidMonths": ["2026-05"]},
+    {"id": 18, "name": "O2", "amount": 27.67, "fixed": 1, "account": "joint", "day": 18, "paidMonths": ["2026-05"]}
   ],
   wishlist: [],
   sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
@@ -1635,10 +1636,17 @@ function load() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Only use defaultState.bills if user hasn't customised them
-      return { ...defaultState, ...parsed };
+      const merged = { ...defaultState, ...parsed };
+      // Ensure bills have paidMonths array (migration for older saves)
+      if (merged.bills) {
+        merged.bills.forEach(b => { if (!b.paidMonths) b.paidMonths = []; });
+      }
+      // Ensure transactions have billId field for consistency
+      if (merged.transactions) {
+        merged.transactions.forEach(t => { if (t.billId === undefined) t.billId = null; });
+      }
+      return merged;
     }
-    // Migrate v1 — but only take selected fields, never empty bills
     const v1 = localStorage.getItem('wedding-fund-jess-v1');
     if (v1) {
       const old = JSON.parse(v1);
@@ -1648,12 +1656,16 @@ function load() {
       if (old.weddingDate) migrated.weddingDate = old.weddingDate;
       if (old.depositDate) migrated.depositDate = old.depositDate;
       if (old.eurRate) migrated.eurRate = old.eurRate;
-      if (old.transactions && old.transactions.length) migrated.transactions = old.transactions;
-      if (old.bills && old.bills.length) migrated.bills = old.bills;
+      if (old.transactions && old.transactions.length) {
+        migrated.transactions = old.transactions.map(t => ({ ...t, billId: t.billId || null }));
+      }
+      if (old.bills && old.bills.length) {
+        migrated.bills = old.bills.map(b => ({ ...b, paidMonths: b.paidMonths || [] }));
+      }
       return migrated;
     }
   } catch (e) {}
-  return { ...defaultState };
+  return JSON.parse(JSON.stringify(defaultState));
 }
 
 function save() {
@@ -1686,16 +1698,39 @@ function lastWorkingDay(year, month) {
   return d;
 }
 
-// Returns the "salary month" identifier (YYYY-MM) — rolls over to next month after the last working day
-function getSalaryMonth() {
-  const now = new Date();
-  const thisMonthLWD = lastWorkingDay(now.getFullYear(), now.getMonth());
-  // If today is on or after the last working day, treat as next month
-  if (now >= thisMonthLWD) {
-    const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+// Returns the pay-cycle key (YYYY-MM) for any date.
+// Pay cycle = period between last working days. e.g. 30 Apr (Thu, payday) -> May cycle
+// because payday marks the START of a new cycle.
+function payCycleFor(date) {
+  const lwd = lastWorkingDay(date.getFullYear(), date.getMonth());
+  // Zero out times so date comparison is by day only
+  const dDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (dDay >= lwd) {
+    // On or after payday -> next month's cycle
+    const next = new Date(date.getFullYear(), date.getMonth() + 1, 1);
     return next.toISOString().slice(0, 7);
   }
-  return now.toISOString().slice(0, 7);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Returns the pay-cycle key for a date string (YYYY-MM-DD)
+function payCycleForStr(dateStr) {
+  return payCycleFor(new Date(dateStr + 'T12:00:00'));
+}
+
+// Current pay cycle (replaces getSalaryMonth)
+function getSalaryMonth() {
+  return payCycleFor(new Date());
+}
+
+// Get start and end Date of a given pay cycle
+function payCycleBounds(cycleKey) {
+  // cycleKey like '2026-05' means: from last working day of April → day before last working day of May
+  const [year, month] = cycleKey.split('-').map(Number);
+  // month is 1-indexed in key. JS Date wants 0-indexed.
+  const startLwd = lastWorkingDay(year, month - 2); // previous month's lwd
+  const endLwd = lastWorkingDay(year, month - 1);   // this month's lwd (exclusive)
+  return { start: startLwd, end: endLwd };
 }
 
 function switchView(name) {
@@ -1990,10 +2025,10 @@ function deleteWish(id) {
 function getTotals() {
   let saved = 0, depositSaved = 0;
   let monthIn = 0, monthOut = 0, monthSaved = 0;
-  const thisMonth = new Date().toISOString().slice(0, 7);
+  const thisCycle = getSalaryMonth();
 
   state.transactions.forEach(t => {
-    const isThisMonth = t.date.startsWith(thisMonth);
+    const isThisMonth = payCycleForStr(t.date) === thisCycle;
     if (t.type === 'save') {
       saved += t.amount;
       if (t.deposit) depositSaved += t.amount;
@@ -2270,7 +2305,11 @@ function txItemHTML(t) {
   const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   const tag = t.type === 'save' ? (t.deposit ? '<span class="tag deposit">Deposit</span>' : '<span class="tag savings">Fund</span>') :
               t.type === 'in' ? '<span class="tag income">In</span>' : '<span class="tag expense">Out</span>';
-  const cat = t.category ? ` · ${escapeHtml(t.category)}` : '';
+  let cat = t.category ? ` · ${escapeHtml(t.category)}` : '';
+  if (t.billId) {
+    const bill = state.bills.find(b => b.id === t.billId);
+    if (bill) cat = ` · <span class="tag billmatch">→ ${escapeHtml(bill.name)}</span>`;
+  }
   return `
     <div class="item">
       <div class="item-info">
@@ -2301,9 +2340,7 @@ function renderBills() {
   document.getElementById('billsTotal').textContent = fmt(total);
   document.getElementById('billsCount').textContent = state.bills.length + (state.bills.length === 1 ? ' recurring item' : ' recurring items');
 
-  const thisMonth = new Date().toISOString().slice(0, 7);
-
-  // Account totals
+  const thisMonth = getSalaryMonth();
   const totals = { joint: 0, me: 0, chay: 0, variable: 0 };
   state.bills.forEach(b => {
     const acc = b.account || 'joint';
@@ -2512,7 +2549,7 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
         const m = dateRaw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
         if (!m) continue;
         const isoDate = `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
-        const monthStr = isoDate.slice(0, 7);
+        const monthStr = payCycleForStr(isoDate);
 
         const txType = cols[idx.type] || '';
         const category = cols[idx.category] || '';
@@ -2538,31 +2575,57 @@ document.getElementById('monzoFile').addEventListener('change', (e) => {
         let desc = name || notes || category || 'Unknown';
         desc = desc.slice(0, 60);
 
-        // Try to match to a bill if category is "Bills" or it's an out transaction
+        // Try to match to a bill if category is "Bills" or it's a recurring-payment type
         let matchedBillId = null;
-        if (type === 'out' && (category === 'Bills' || txType === 'Direct Debit' || txType === 'Faster payment')) {
+        if (type === 'out' && (category === 'Bills' || txType === 'Direct Debit' || txType === 'Faster payment' || txType === 'Standing order')) {
           const txNorm = normaliseForMatch(desc);
+          let bestMatch = null;
+          let bestScore = 0;
+
           for (const entry of billLookup) {
-            // Check if normalised names share a substantial substring
-            // or if a distinctive word from the bill appears in the transaction
-            let match = false;
-            if (entry.normName.length >= 4 && (txNorm.includes(entry.normName.slice(0, 6)) || entry.normName.includes(txNorm.slice(0, 6)))) {
-              match = true;
+            let score = 0;
+
+            // Exact match on normalised name (best signal)
+            if (entry.normName === txNorm) {
+              score = 100;
             }
-            if (!match) {
+            // One contains the other (very strong signal)
+            else if (entry.normName.length >= 2 && (txNorm.includes(entry.normName) || entry.normName.includes(txNorm))) {
+              score = 80;
+            }
+            // First few chars match
+            else if (entry.normName.length >= 4 && txNorm.length >= 4 && entry.normName.slice(0, 4) === txNorm.slice(0, 4)) {
+              score = 60;
+            }
+            // Distinctive word match
+            else {
               for (const word of entry.words) {
-                if (txNorm.includes(word)) { match = true; break; }
+                if (txNorm.includes(word)) { score = 40; break; }
               }
             }
-            if (match) {
-              matchedBillId = entry.bill.id;
-              // Mark the bill as paid for this month
-              if (!entry.bill.paidMonths) entry.bill.paidMonths = [];
-              if (!entry.bill.paidMonths.includes(monthStr)) {
-                entry.bill.paidMonths.push(monthStr);
-                matchedToBills++;
-              }
-              break;
+
+            // Bonus if amount matches exactly (very strong signal for fixed bills)
+            if (score > 0 && Math.abs(entry.bill.amount - txAmount) < 0.01) {
+              score += 50;
+            }
+            // Half-bonus if amount is within 10% (handles variable bills)
+            else if (score > 0 && entry.bill.amount > 0 && Math.abs(entry.bill.amount - txAmount) / entry.bill.amount < 0.3) {
+              score += 10;
+            }
+
+            if (score > bestScore) {
+              bestScore = score;
+              bestMatch = entry;
+            }
+          }
+
+          // Only accept if score is above threshold (avoid false positives on partial words)
+          if (bestMatch && bestScore >= 40) {
+            matchedBillId = bestMatch.bill.id;
+            if (!bestMatch.bill.paidMonths) bestMatch.bill.paidMonths = [];
+            if (!bestMatch.bill.paidMonths.includes(monthStr)) {
+              bestMatch.bill.paidMonths.push(monthStr);
+              matchedToBills++;
             }
           }
         }
@@ -2697,7 +2760,7 @@ function renderUpcoming() {
   const now = new Date();
   const today = now.getDate();
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const thisMonth = now.toISOString().slice(0, 7);
+  const thisMonth = getSalaryMonth();
 
   // For each bill, work out days until it goes out (this month or next)
   const billsWithDays = state.bills
@@ -2777,7 +2840,7 @@ function renderTotals() {
   const byMonth = {}; // YYYY-MM -> { in, out, saved }
 
   state.transactions.forEach(t => {
-    const month = t.date.slice(0, 7);
+    const month = payCycleForStr(t.date);
     if (!byMonth[month]) byMonth[month] = { in: 0, out: 0, saved: 0 };
 
     if (t.type === 'in') {
@@ -2804,21 +2867,40 @@ function renderTotals() {
   const rate = totalIn > 0 ? (totalSaved / totalIn) * 100 : 0;
   document.getElementById('totalsRate').textContent = Math.round(rate) + '%';
 
-  // Spending by category (out only)
-  const catTotals = {};
+  // Spending by category — separate bills (matched to templates) from day-to-day
+  const dayToDayTotals = {};
+  let billsTotal = 0;
   state.transactions.forEach(t => {
     if (t.type === 'out') {
-      const cat = t.category || 'Uncategorised';
-      catTotals[cat] = (catTotals[cat] || 0) + t.amount;
+      if (t.billId) {
+        billsTotal += t.amount;
+      } else {
+        const cat = t.category || 'Uncategorised';
+        dayToDayTotals[cat] = (dayToDayTotals[cat] || 0) + t.amount;
+      }
     }
   });
-  const sortedCats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+  const sortedCats = Object.entries(dayToDayTotals).sort((a, b) => b[1] - a[1]);
   const catEl = document.getElementById('categoryBreakdown');
-  if (sortedCats.length === 0) {
+  if (sortedCats.length === 0 && billsTotal === 0) {
     catEl.innerHTML = '<div class="empty">Log a few transactions to see your spending breakdown.</div>';
   } else {
-    const maxAmount = sortedCats[0][1];
-    catEl.innerHTML = sortedCats.map(([cat, amount]) => {
+    const maxAmount = Math.max(billsTotal, sortedCats.length ? sortedCats[0][1] : 0);
+    let html = '';
+    // Show matched bills as one line first
+    if (billsTotal > 0) {
+      const pct = maxAmount > 0 ? (billsTotal / maxAmount) * 100 : 0;
+      html += `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">Bills (paid)</div>
+            <div class="sort-bar" style="margin-top: 6px;"><div class="sort-fill sort-bills" style="width: ${pct}%"></div></div>
+          </div>
+          <div class="item-amount out">£${fmt(billsTotal)}</div>
+        </div>
+      `;
+    }
+    html += sortedCats.map(([cat, amount]) => {
       const pct = maxAmount > 0 ? (amount / maxAmount) * 100 : 0;
       return `
         <div class="item">
@@ -2830,6 +2912,7 @@ function renderTotals() {
         </div>
       `;
     }).join('');
+    catEl.innerHTML = html;
   }
 
   // Monthly breakdown
