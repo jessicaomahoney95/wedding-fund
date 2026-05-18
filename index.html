@@ -775,6 +775,24 @@
   .tag.must { background: var(--rust); color: var(--sand-light); }
   .tag.want { background: var(--gold); color: var(--sand-light); }
   .tag.nice { background: var(--accent); color: var(--sand-light); }
+  .tag.account-joint { background: var(--blue-mid); color: var(--sand-light); }
+  .tag.account-me { background: var(--olive); color: var(--sand-light); }
+  .tag.account-chay { background: var(--accent); color: var(--sand-light); }
+  .tag.varies { background: var(--gold); color: var(--sand-light); }
+
+  .item.upcoming-today { border-left: 3px solid var(--rust); }
+  .item.upcoming-soon { border-left: 3px solid var(--gold); }
+  .item.upcoming-later { border-left: 3px solid var(--accent); }
+
+  .when-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-right: 6px;
+    font-weight: 500;
+  }
+
+  .when-label.today { color: var(--rust); }
+  .when-label.soon { color: var(--gold); }
 
   .wish-totals {
     display: grid;
@@ -911,6 +929,12 @@
     </div>
   </div>
 
+  <div class="card" id="upcomingBillsCard" style="display:none;">
+    <h2>Upcoming bills</h2>
+    <p class="subtitle" id="upcomingSubtitle">Today and the days ahead</p>
+    <div class="item-list" id="upcomingList"></div>
+  </div>
+
   <div class="card" id="sorterCard">
     <h2>Salary sorter</h2>
     <p class="subtitle">Combine income, then plan the split</p>
@@ -1008,7 +1032,25 @@
     <h2>Monthly outgoing</h2>
     <div class="big-amount"><span class="currency">£</span><span id="billsTotal">0</span></div>
     <p class="subtitle" id="billsCount">0 recurring items</p>
-    <button class="btn btn-primary btn-full" onclick="openModal('bill')">Add a bill</button>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Joint</div>
+        <div class="stat-value" id="billsJoint">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Yours</div>
+        <div class="stat-value" id="billsMe">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Chay's</div>
+        <div class="stat-value" id="billsChay">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Variable</div>
+        <div class="stat-value" id="billsVariable">£0</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="openModal('bill')" style="margin-top: 14px;">Add a bill</button>
   </div>
 
   <div class="card">
@@ -1180,6 +1222,28 @@
     </div>
 
     <div class="field">
+      <label>Same every month?</label>
+      <div class="seg" id="billFixedSeg">
+        <button class="active" data-fixed="1">Fixed amount</button>
+        <button data-fixed="0">Varies</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Day of the month it goes out</label>
+      <input type="number" id="billDay" inputmode="numeric" placeholder="e.g. 1, 15, 28" min="1" max="31">
+    </div>
+
+    <div class="field">
+      <label>Which account</label>
+      <div class="seg" id="billAccountSeg">
+        <button class="active" data-account="joint">Joint</button>
+        <button data-account="me">Yours</button>
+        <button data-account="chay">Chay's</button>
+      </div>
+    </div>
+
+    <div class="field">
       <label>Category</label>
       <select id="billCat">
         <option value="housing">Housing</option>
@@ -1249,6 +1313,8 @@ let currentFilter = 'all';
 let currentTxType = 'in';
 let currentTxDeposit = 0;
 let currentWishPriority = 'must';
+let currentBillFixed = 1;
+let currentBillAccount = 'joint';
 
 function load() {
   try {
@@ -1308,6 +1374,10 @@ function openModal(type) {
   } else if (type === 'bill') {
     document.getElementById('billName').value = '';
     document.getElementById('billAmount').value = '';
+    document.getElementById('billDay').value = '';
+    currentBillFixed = 1;
+    currentBillAccount = 'joint';
+    updateBillSegs();
     document.getElementById('modalBill').classList.add('open');
   } else if (type === 'wish') {
     document.getElementById('wishName').value = '';
@@ -1364,6 +1434,29 @@ document.querySelectorAll('#wishPrioritySeg button').forEach(b => {
   });
 });
 
+function updateBillSegs() {
+  document.querySelectorAll('#billFixedSeg button').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.fixed) === currentBillFixed);
+  });
+  document.querySelectorAll('#billAccountSeg button').forEach(b => {
+    b.classList.toggle('active', b.dataset.account === currentBillAccount);
+  });
+}
+
+document.querySelectorAll('#billFixedSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentBillFixed = parseInt(b.dataset.fixed);
+    updateBillSegs();
+  });
+});
+
+document.querySelectorAll('#billAccountSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentBillAccount = b.dataset.account;
+    updateBillSegs();
+  });
+});
+
 document.querySelectorAll('#filterSeg button').forEach(b => {
   b.addEventListener('click', () => {
     currentFilter = b.dataset.filter;
@@ -1401,11 +1494,21 @@ function saveBill() {
   const name = document.getElementById('billName').value.trim();
   const amount = parseFloat(document.getElementById('billAmount').value);
   const cat = document.getElementById('billCat').value;
+  const day = parseInt(document.getElementById('billDay').value);
 
   if (!name) { alert('Add a name'); return; }
   if (!amount || amount <= 0) { alert('Enter an amount'); return; }
+  if (!day || day < 1 || day > 31) { alert('Enter a day between 1 and 31'); return; }
 
-  state.bills.push({ id: Date.now(), name, amount, cat });
+  state.bills.push({
+    id: Date.now(),
+    name,
+    amount,
+    cat,
+    day,
+    fixed: currentBillFixed,
+    account: currentBillAccount
+  });
   save();
   closeModal('bill');
   renderAll();
@@ -1739,20 +1842,42 @@ function renderBills() {
   document.getElementById('billsTotal').textContent = fmt(total);
   document.getElementById('billsCount').textContent = state.bills.length + (state.bills.length === 1 ? ' recurring item' : ' recurring items');
 
+  // Account totals
+  const totals = { joint: 0, me: 0, chay: 0, variable: 0 };
+  state.bills.forEach(b => {
+    const acc = b.account || 'joint';
+    totals[acc] = (totals[acc] || 0) + b.amount;
+    if (b.fixed === 0) totals.variable += b.amount;
+  });
+  document.getElementById('billsJoint').textContent = '£' + fmt(totals.joint);
+  document.getElementById('billsMe').textContent = '£' + fmt(totals.me);
+  document.getElementById('billsChay').textContent = '£' + fmt(totals.chay);
+  document.getElementById('billsVariable').textContent = '£' + fmt(totals.variable);
+
   const el = document.getElementById('billsList');
   if (state.bills.length === 0) {
     el.innerHTML = '<div class="empty">No bills yet. Add the ones you pay every month so you can see what\'s left for saving.</div>';
   } else {
-    el.innerHTML = state.bills.map(b => `
-      <div class="item">
-        <div class="item-info">
-          <div class="item-title">${escapeHtml(b.name)}</div>
-          <div class="item-meta"><span class="tag">${b.cat}</span></div>
+    // Sort by day of month
+    const sorted = [...state.bills].sort((a, b) => (a.day || 99) - (b.day || 99));
+    el.innerHTML = sorted.map(b => {
+      const accClass = b.account || 'joint';
+      const accLabel = accClass === 'joint' ? 'Joint' : accClass === 'me' ? 'Yours' : 'Chay\'s';
+      const fixedTag = b.fixed === 0 ? '<span class="tag varies">Varies</span>' : '';
+      const dayLabel = b.day ? `Day ${b.day}` : '';
+      return `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(b.name)}</div>
+            <div class="item-meta">
+              ${dayLabel ? dayLabel + ' · ' : ''}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag}
+            </div>
+          </div>
+          <div class="item-amount out">-£${fmt(b.amount)}</div>
+          <button class="item-del" onclick="deleteBill(${b.id})">×</button>
         </div>
-        <div class="item-amount out">-£${fmt(b.amount)}</div>
-        <button class="item-del" onclick="deleteBill(${b.id})">×</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
 
@@ -1874,12 +1999,98 @@ function resetAll() {
   renderSettings();
 }
 
+function renderUpcoming() {
+  const card = document.getElementById('upcomingBillsCard');
+  const list = document.getElementById('upcomingList');
+  const subtitle = document.getElementById('upcomingSubtitle');
+
+  if (state.bills.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const now = new Date();
+  const today = now.getDate();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+  // For each bill, work out days until it goes out (this month or next)
+  const billsWithDays = state.bills.map(b => {
+    const day = b.day || 1;
+    const effectiveDay = Math.min(day, lastDay); // Handle e.g. day 31 in February
+    let daysUntil;
+    if (effectiveDay >= today) {
+      daysUntil = effectiveDay - today;
+    } else {
+      // Already passed this month — show as next month
+      const nextMonthLast = new Date(now.getFullYear(), now.getMonth() + 2, 0).getDate();
+      const nextEffective = Math.min(day, nextMonthLast);
+      daysUntil = (lastDay - today) + nextEffective;
+    }
+    return { ...b, daysUntil, effectiveDay };
+  });
+
+  // Show next 7 days of upcoming
+  const upcoming = billsWithDays
+    .filter(b => b.daysUntil <= 14)
+    .sort((a, b) => a.daysUntil - b.daysUntil);
+
+  if (upcoming.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+
+  // Group by today / this week / next 2 weeks
+  const todayBills = upcoming.filter(b => b.daysUntil === 0);
+  const soonBills = upcoming.filter(b => b.daysUntil > 0 && b.daysUntil <= 7);
+  const laterBills = upcoming.filter(b => b.daysUntil > 7);
+
+  const todayTotal = todayBills.reduce((s, b) => s + b.amount, 0);
+  const soonTotal = soonBills.reduce((s, b) => s + b.amount, 0);
+
+  if (todayBills.length > 0) {
+    subtitle.textContent = `£${fmt(todayTotal)} out today · £${fmt(soonTotal)} this week`;
+  } else if (soonBills.length > 0) {
+    subtitle.textContent = `£${fmt(soonTotal)} due in the next 7 days`;
+  } else {
+    subtitle.textContent = `Coming up in the next 2 weeks`;
+  }
+
+  const renderBillRow = (b, group) => {
+    const accClass = b.account || 'joint';
+    const accLabel = accClass === 'joint' ? 'Joint' : accClass === 'me' ? 'You' : 'Chay';
+    const fixedTag = b.fixed === 0 ? '<span class="tag varies">Varies</span>' : '';
+    let whenLabel;
+    if (b.daysUntil === 0) whenLabel = '<span class="when-label today">TODAY</span>';
+    else if (b.daysUntil === 1) whenLabel = '<span class="when-label soon">TOMORROW</span>';
+    else whenLabel = `<span class="when-label">In ${b.daysUntil} days</span>`;
+
+    return `
+      <div class="item upcoming-${group}">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(b.name)}</div>
+          <div class="item-meta">${whenLabel}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag}</div>
+        </div>
+        <div class="item-amount out">-£${fmt(b.amount)}</div>
+      </div>
+    `;
+  };
+
+  let html = '';
+  todayBills.forEach(b => { html += renderBillRow(b, 'today'); });
+  soonBills.forEach(b => { html += renderBillRow(b, 'soon'); });
+  laterBills.forEach(b => { html += renderBillRow(b, 'later'); });
+  list.innerHTML = html;
+}
+
 function renderAll() {
   renderHome();
   renderMoney();
   renderBills();
   renderWishlist();
   renderSorter();
+  renderUpcoming();
 }
 
 document.querySelectorAll('.modal').forEach(m => {
