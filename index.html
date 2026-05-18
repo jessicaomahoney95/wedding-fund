@@ -1286,7 +1286,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v6 · 18 May 2026 · 122 default transactions</p>
+    <p class="subtitle">Version: v7 · 18 May 2026 · timezone fix · 122 default transactions</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1685,7 +1685,8 @@ function fmtMoney(n, c = '£') {
 }
 
 function todayStr() {
-  return new Date().toISOString().split('T')[0];
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 // Get the last working day (Mon-Fri) of a given month
@@ -1707,8 +1708,11 @@ function payCycleFor(date) {
   const dDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   if (dDay >= lwd) {
     // On or after payday -> next month's cycle
-    const next = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-    return next.toISOString().slice(0, 7);
+    // Build the next month's key directly to avoid timezone shifts from toISOString
+    let nextY = date.getFullYear();
+    let nextM = date.getMonth() + 2; // +2 because getMonth is 0-indexed, we want 1-indexed next month
+    if (nextM > 12) { nextY++; nextM -= 12; }
+    return `${nextY}-${String(nextM).padStart(2, '0')}`;
   }
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 }
@@ -2723,7 +2727,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v6
+  el.textContent = `VERSION: v7
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
