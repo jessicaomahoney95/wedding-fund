@@ -60,15 +60,15 @@
 
   .tab {
     flex: 1;
-    padding: 14px 4px 12px;
+    padding: 14px 2px 12px;
     text-align: center;
     background: transparent;
     border: none;
     color: var(--sand);
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     cursor: pointer;
     opacity: 0.55;
     border-bottom: 2px solid transparent;
@@ -837,6 +837,7 @@
   <button class="tab" data-view="money">Money</button>
   <button class="tab" data-view="bills">Bills</button>
   <button class="tab" data-view="wishlist">Wishlist</button>
+  <button class="tab" data-view="totals">Totals</button>
   <button class="tab" data-view="settings">Settings</button>
 </div>
 
@@ -955,7 +956,7 @@
     </div>
     <div class="field" style="margin-top: 10px;">
       <label>Other income — what is it?</label>
-      <input type="text" id="incomeOtherNote" placeholder="e.g. Freelance, gift from parents">
+      <input type="text" id="incomeOtherNote" placeholder="e.g. Freelance, gift from parents" oninput="renderSorter()">
     </div>
 
     <div class="pot-summary">
@@ -1095,6 +1096,61 @@
     <h2>Items</h2>
     <div class="item-list" id="wishList">
       <div class="empty">Nothing on the list yet. Add the things you both want — venue, dress, flowers, cake, anything.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-totals">
+  <div class="header">
+    <div class="eyebrow">Running totals</div>
+    <h1>All time</h1>
+  </div>
+
+  <div class="card">
+    <h2>Wedding fund</h2>
+    <p class="subtitle">Lifetime contributions</p>
+    <div class="big-amount"><span class="currency">£</span><span id="totalsFund">0</span></div>
+    <div class="eur-equiv" id="totalsFundEur">≈ €0</div>
+    <div class="stat-grid" style="margin-top: 12px;">
+      <div class="stat">
+        <div class="stat-label">Deposit</div>
+        <div class="stat-value" id="totalsDeposit">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">General fund</div>
+        <div class="stat-value" id="totalsGeneral">£0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Money flow</h2>
+    <p class="subtitle">Everything you've logged</p>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Total in</div>
+        <div class="stat-value positive" id="totalsIn">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total out</div>
+        <div class="stat-value negative" id="totalsOut">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total saved</div>
+        <div class="stat-value" id="totalsSaved">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Savings rate</div>
+        <div class="stat-value" id="totalsRate">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>By month</h2>
+    <p class="subtitle">How much you saved each month</p>
+    <div class="item-list" id="monthlyBreakdown">
+      <div class="empty">Log a few months of activity to see your trend.</div>
     </div>
   </div>
 </div>
@@ -1305,7 +1361,8 @@ const defaultState = {
   typicalChay: 0,
   transactions: [],
   bills: [],
-  wishlist: []
+  wishlist: [],
+  sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
 };
 
 let state = load();
@@ -1345,6 +1402,28 @@ function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
+// Get the last working day (Mon-Fri) of a given month
+function lastWorkingDay(year, month) {
+  // month is 0-indexed for Date constructor
+  let d = new Date(year, month + 1, 0); // last day of month
+  while (d.getDay() === 0 || d.getDay() === 6) {
+    d.setDate(d.getDate() - 1);
+  }
+  return d;
+}
+
+// Returns the "salary month" identifier (YYYY-MM) — rolls over to next month after the last working day
+function getSalaryMonth() {
+  const now = new Date();
+  const thisMonthLWD = lastWorkingDay(now.getFullYear(), now.getMonth());
+  // If today is on or after the last working day, treat as next month
+  if (now >= thisMonthLWD) {
+    const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    return next.toISOString().slice(0, 7);
+  }
+  return now.toISOString().slice(0, 7);
+}
+
 function switchView(name) {
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.view === name);
@@ -1354,7 +1433,7 @@ function switchView(name) {
   });
   window.scrollTo(0, 0);
   const fab = document.getElementById('addBtn');
-  fab.style.display = (name === 'settings' || name === 'bills' || name === 'wishlist') ? 'none' : 'flex';
+  fab.style.display = (name === 'settings' || name === 'bills' || name === 'wishlist' || name === 'totals') ? 'none' : 'flex';
 }
 
 document.querySelectorAll('.tab').forEach(t => {
@@ -1668,10 +1747,44 @@ function renderHome() {
 
 function renderSorter() {
   const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
-  const me = parseFloat(document.getElementById('incomeMe').value) || 0;
-  const chay = parseFloat(document.getElementById('incomeChay').value) || 0;
-  const other = parseFloat(document.getElementById('incomeOther').value) || 0;
+
+  // Check if we need to reset (new salary month)
+  const currentMonth = getSalaryMonth();
+  if (!state.sorterDraft) state.sorterDraft = { me: 0, chay: 0, other: 0, otherNote: '', month: '' };
+  if (state.sorterDraft.month !== currentMonth) {
+    // New month — reset and prefill from typicals
+    state.sorterDraft = {
+      me: state.typicalSalary || 0,
+      chay: state.typicalChay || 0,
+      other: 0,
+      otherNote: '',
+      month: currentMonth
+    };
+    save();
+  }
+
+  // Sync state to inputs unless user is actively typing in them
+  const meEl = document.getElementById('incomeMe');
+  const chayEl = document.getElementById('incomeChay');
+  const otherEl = document.getElementById('incomeOther');
+  const otherNoteEl = document.getElementById('incomeOtherNote');
+  if (document.activeElement !== meEl) meEl.value = state.sorterDraft.me || '';
+  if (document.activeElement !== chayEl) chayEl.value = state.sorterDraft.chay || '';
+  if (document.activeElement !== otherEl) otherEl.value = state.sorterDraft.other || '';
+  if (document.activeElement !== otherNoteEl) otherNoteEl.value = state.sorterDraft.otherNote || '';
+
+  const me = parseFloat(meEl.value) || 0;
+  const chay = parseFloat(chayEl.value) || 0;
+  const other = parseFloat(otherEl.value) || 0;
+  const otherNote = otherNoteEl.value;
   const pot = me + chay + other;
+
+  // Save current values back to state
+  state.sorterDraft.me = me;
+  state.sorterDraft.chay = chay;
+  state.sorterDraft.other = other;
+  state.sorterDraft.otherNote = otherNote;
+  save();
 
   // Wedding fund suggestion
   const { saved } = getTotals();
@@ -1694,7 +1807,7 @@ function renderSorter() {
   document.getElementById('sortWedding').textContent = '£' + fmt(toWedding);
   document.getElementById('sortLeftover').textContent = '£' + fmt(leftover);
 
-  // Daily allowance — leftover divided by days remaining in the month
+  // Daily allowance
   const dailyEl = document.getElementById('dailyAllowance');
   if (leftover > 0) {
     const now = new Date();
@@ -1713,7 +1826,7 @@ function renderSorter() {
     dailyEl.innerHTML = '';
   }
 
-  // Breakdown line
+  // Breakdown
   const parts = [];
   if (me > 0) parts.push(`You £${fmt(me)}`);
   if (chay > 0) parts.push(`Chay £${fmt(chay)}`);
@@ -1797,6 +1910,7 @@ function logSorterSplit() {
   }
 
   state.transactions.push(...entries);
+  state.sorterDraft = { me: 0, chay: 0, other: 0, otherNote: '', month: getSalaryMonth() };
   save();
 
   document.getElementById('incomeMe').value = '';
@@ -2084,6 +2198,62 @@ function renderUpcoming() {
   list.innerHTML = html;
 }
 
+function renderTotals() {
+  let totalIn = 0, totalOut = 0, totalSaved = 0, depositSaved = 0;
+  const byMonth = {}; // YYYY-MM -> { in, out, saved }
+
+  state.transactions.forEach(t => {
+    const month = t.date.slice(0, 7);
+    if (!byMonth[month]) byMonth[month] = { in: 0, out: 0, saved: 0 };
+
+    if (t.type === 'in') {
+      totalIn += t.amount;
+      byMonth[month].in += t.amount;
+    } else if (t.type === 'out') {
+      totalOut += t.amount;
+      byMonth[month].out += t.amount;
+    } else if (t.type === 'save') {
+      totalSaved += t.amount;
+      if (t.deposit) depositSaved += t.amount;
+      byMonth[month].saved += t.amount;
+    }
+  });
+
+  document.getElementById('totalsFund').textContent = fmt(totalSaved);
+  document.getElementById('totalsFundEur').textContent = '≈ €' + fmt(totalSaved * state.eurRate);
+  document.getElementById('totalsDeposit').textContent = '£' + fmt(depositSaved);
+  document.getElementById('totalsGeneral').textContent = '£' + fmt(totalSaved - depositSaved);
+
+  document.getElementById('totalsIn').textContent = '£' + fmt(totalIn);
+  document.getElementById('totalsOut').textContent = '£' + fmt(totalOut);
+  document.getElementById('totalsSaved').textContent = '£' + fmt(totalSaved);
+  const rate = totalIn > 0 ? (totalSaved / totalIn) * 100 : 0;
+  document.getElementById('totalsRate').textContent = Math.round(rate) + '%';
+
+  // Monthly breakdown
+  const months = Object.keys(byMonth).sort().reverse();
+  const breakdownEl = document.getElementById('monthlyBreakdown');
+  if (months.length === 0) {
+    breakdownEl.innerHTML = '<div class="empty">Log a few months of activity to see your trend.</div>';
+  } else {
+    breakdownEl.innerHTML = months.map(m => {
+      const d = new Date(m + '-01');
+      const label = d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+      const data = byMonth[m];
+      const net = data.in - data.out - data.saved;
+      return `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">${label}</div>
+            <div class="item-meta">In £${fmt(data.in)} · Out £${fmt(data.out)} · Net ${net >= 0 ? '£' : '-£'}${fmt(Math.abs(net))}</div>
+          </div>
+          <div class="item-amount save">£${fmt(data.saved)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
 function renderAll() {
   renderHome();
   renderMoney();
@@ -2091,6 +2261,7 @@ function renderAll() {
   renderWishlist();
   renderSorter();
   renderUpcoming();
+  renderTotals();
 }
 
 document.querySelectorAll('.modal').forEach(m => {
