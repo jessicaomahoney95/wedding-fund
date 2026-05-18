@@ -1594,16 +1594,24 @@ function saveTx() {
   if (!desc) { alert('Add a description'); return; }
   if (!date) { alert('Pick a date'); return; }
 
-  state.transactions.push({
+  const newTx = {
     id: Date.now(),
     type: currentTxType,
     amount,
     desc,
     date,
     deposit: currentTxType === 'save' ? currentTxDeposit : 0
-  });
+  };
 
+  state.transactions.push(newTx);
   save();
+
+  // Verify it saved
+  const verify = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  const inStorage = verify.transactions ? verify.transactions.length : 0;
+
+  alert(`Saved! Type: ${currentTxType}, Amount: £${amount}\nIn state: ${state.transactions.length}\nIn storage: ${inStorage}`);
+
   closeModal('tx');
   renderAll();
 }
