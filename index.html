@@ -561,6 +561,148 @@
 
   .header { padding: 8px 4px 14px; }
 
+  .sorter-breakdown {
+    margin: 14px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .income-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .income-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .income-field input {
+    width: 100%;
+    padding: 10px 10px;
+    border: 1px solid var(--sand-dark);
+    border-radius: 10px;
+    background: var(--sand-light);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+
+  .income-field input:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+  }
+
+  .pot-summary {
+    margin: 16px 0 6px;
+    padding: 14px;
+    background: var(--sand-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--olive);
+  }
+
+  .pot-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .pot-amount {
+    font-size: 26px;
+    color: var(--olive);
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .pot-breakdown {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .sort-row {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sort-row-total {
+    padding-top: 10px;
+    border-top: 1px solid var(--sand-dark);
+    margin-top: 4px;
+  }
+
+  .sort-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sort-bar {
+    height: 6px;
+    background: var(--sand-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sort-fill {
+    height: 100%;
+    transition: width 0.4s ease;
+    border-radius: 3px;
+  }
+
+  .sort-in { background: var(--olive); }
+  .sort-bills { background: var(--rust); }
+  .sort-wedding { background: var(--blue-mid); }
+  .sort-leftover { background: var(--gold); }
+
+  .sort-amount {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: right;
+    min-width: 60px;
+  }
+
+  .sort-amount.in { color: var(--olive); }
+  .sort-amount.out { color: var(--rust); }
+  .sort-amount.save { color: var(--blue-mid); }
+
+  .sorter-hint {
+    padding: 10px 12px;
+    background: var(--sand-light);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .sorter-hint.warn {
+    background: rgba(142, 61, 38, 0.12);
+    color: var(--rust);
+    font-style: normal;
+  }
+
+  .sorter-hint.empty { display: none; }
+
   .header .eyebrow {
     font-size: 11px;
     color: #D88B6E;
@@ -736,6 +878,59 @@
     </div>
   </div>
 
+  <div class="card" id="sorterCard">
+    <h2>Salary sorter</h2>
+    <p class="subtitle">Combine income, then plan the split</p>
+
+    <div class="income-grid">
+      <div class="income-field">
+        <label>Yours £</label>
+        <input type="number" id="incomeMe" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+      <div class="income-field">
+        <label>Chay's £</label>
+        <input type="number" id="incomeChay" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+      <div class="income-field">
+        <label>Other £</label>
+        <input type="number" id="incomeOther" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+    </div>
+    <div class="field" style="margin-top: 10px;">
+      <label>Other income — what is it?</label>
+      <input type="text" id="incomeOtherNote" placeholder="e.g. Freelance, gift from parents">
+    </div>
+
+    <div class="pot-summary">
+      <div class="pot-label">Combined pot this month</div>
+      <div class="pot-amount" id="potTotal">£0</div>
+      <div class="pot-breakdown" id="potBreakdown"></div>
+    </div>
+
+    <div class="sorter-breakdown" id="sorterBreakdown">
+      <div class="sort-row">
+        <div class="sort-label">Monthly bills</div>
+        <div class="sort-bar"><div class="sort-fill sort-bills" style="width:0%"></div></div>
+        <div class="sort-amount out" id="sortBills">£0</div>
+      </div>
+      <div class="sort-row">
+        <div class="sort-label">To wedding fund</div>
+        <div class="sort-bar"><div class="sort-fill sort-wedding" style="width:0%"></div></div>
+        <div class="sort-amount save" id="sortWedding">£0</div>
+      </div>
+      <div class="sort-row sort-row-total">
+        <div class="sort-label">Leftover for you</div>
+        <div class="sort-bar"><div class="sort-fill sort-leftover" style="width:0%"></div></div>
+        <div class="sort-amount" id="sortLeftover">£0</div>
+      </div>
+    </div>
+    <div class="sorter-hint" id="sorterHint"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="useTypicalSalary()">Use typical</button>
+      <button class="btn btn-primary" onclick="logSorterSplit()">Log this split</button>
+    </div>
+  </div>
+
   <div class="section-head">
     <h3>Recent activity</h3>
     <button class="link" onclick="switchView('money')">View all</button>
@@ -852,6 +1047,19 @@
       <label>Deposit due by</label>
       <input type="date" id="setDepositDate">
     </div>
+  </div>
+
+  <div class="card">
+    <h2>Income</h2>
+    <div class="field">
+      <label>Your typical monthly salary (GBP)</label>
+      <input type="number" id="setSalary" inputmode="decimal" step="0.01">
+    </div>
+    <div class="field">
+      <label>Chay's typical monthly salary (GBP)</label>
+      <input type="number" id="setChay" inputmode="decimal" step="0.01">
+    </div>
+    <p class="small-note">Rough averages. The salary sorter uses these as a starting point — you can override the actual amounts each month, and add other income on top.</p>
   </div>
 
   <div class="card">
@@ -995,6 +1203,8 @@ const defaultState = {
   weddingDate: '2028-04-01',
   depositDate: '2026-08-01',
   eurRate: 1.17,
+  typicalSalary: 0,
+  typicalChay: 0,
   transactions: [],
   bills: [],
   wishlist: []
@@ -1319,8 +1529,129 @@ function renderHome() {
   }
 }
 
+function renderSorter() {
+  const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
+  const me = parseFloat(document.getElementById('incomeMe').value) || 0;
+  const chay = parseFloat(document.getElementById('incomeChay').value) || 0;
+  const other = parseFloat(document.getElementById('incomeOther').value) || 0;
+  const pot = me + chay + other;
+
+  // Wedding fund suggestion
+  const { saved } = getTotals();
+  const months = getMonthsUntil(state.weddingDate);
+  const remaining = Math.max(0, state.goal - saved);
+  const suggestedWedding = months > 0 ? remaining / months : 0;
+
+  const afterBills = Math.max(0, pot - billsTotal);
+  const toWedding = Math.min(suggestedWedding, afterBills);
+  const leftover = afterBills - toWedding;
+
+  const pct = (n) => pot > 0 ? Math.min(100, (n / pot) * 100) : 0;
+
+  document.querySelector('.sort-bills').style.width = pct(billsTotal) + '%';
+  document.querySelector('.sort-wedding').style.width = pct(toWedding) + '%';
+  document.querySelector('.sort-leftover').style.width = pct(leftover) + '%';
+
+  document.getElementById('potTotal').textContent = '£' + fmt(pot);
+  document.getElementById('sortBills').textContent = '£' + fmt(billsTotal);
+  document.getElementById('sortWedding').textContent = '£' + fmt(toWedding);
+  document.getElementById('sortLeftover').textContent = '£' + fmt(leftover);
+
+  // Breakdown line
+  const parts = [];
+  if (me > 0) parts.push(`You £${fmt(me)}`);
+  if (chay > 0) parts.push(`Chay £${fmt(chay)}`);
+  if (other > 0) parts.push(`Other £${fmt(other)}`);
+  document.getElementById('potBreakdown').textContent = parts.length > 0 ? parts.join(' + ') : 'Enter income above';
+
+  // Hint
+  const hint = document.getElementById('sorterHint');
+  if (pot === 0) {
+    hint.className = 'sorter-hint empty';
+    hint.textContent = '';
+  } else if (pot < billsTotal) {
+    hint.className = 'sorter-hint warn';
+    hint.textContent = `The pot is £${fmt(billsTotal - pot)} short of covering your bills.`;
+  } else if (afterBills < suggestedWedding) {
+    hint.className = 'sorter-hint warn';
+    hint.textContent = `Tight month: you'd need £${fmt(suggestedWedding)} to stay on pace but only have £${fmt(afterBills)} after bills. Catch up next month if you can.`;
+  } else {
+    hint.className = 'sorter-hint';
+    hint.textContent = `On pace: £${fmt(suggestedWedding)} to the fund keeps you on track. £${fmt(leftover)} left over after that.`;
+  }
+}
+
+function useTypicalSalary() {
+  let used = false;
+  if (state.typicalSalary > 0) {
+    document.getElementById('incomeMe').value = state.typicalSalary;
+    used = true;
+  }
+  if (state.typicalChay > 0) {
+    document.getElementById('incomeChay').value = state.typicalChay;
+    used = true;
+  }
+  if (used) {
+    renderSorter();
+  } else {
+    alert('Set typical salaries in Settings first.');
+  }
+}
+
+function logSorterSplit() {
+  const me = parseFloat(document.getElementById('incomeMe').value) || 0;
+  const chay = parseFloat(document.getElementById('incomeChay').value) || 0;
+  const other = parseFloat(document.getElementById('incomeOther').value) || 0;
+  const otherNote = document.getElementById('incomeOtherNote').value.trim();
+  const pot = me + chay + other;
+
+  if (pot <= 0) { alert('Enter at least one income amount'); return; }
+
+  const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
+  const { saved } = getTotals();
+  const months = getMonthsUntil(state.weddingDate);
+  const remaining = Math.max(0, state.goal - saved);
+  const suggestedWedding = months > 0 ? remaining / months : 0;
+  const afterBills = Math.max(0, pot - billsTotal);
+  const toWedding = Math.min(suggestedWedding, afterBills);
+
+  const date = todayStr();
+  const month = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const entries = [];
+  let idCounter = Date.now();
+
+  if (me > 0) {
+    entries.push({ id: idCounter++, type: 'in', amount: me, desc: `Your salary - ${month}`, date, deposit: 0 });
+  }
+  if (chay > 0) {
+    entries.push({ id: idCounter++, type: 'in', amount: chay, desc: `Chay's salary - ${month}`, date, deposit: 0 });
+  }
+  if (other > 0) {
+    const label = otherNote ? `${otherNote} - ${month}` : `Other income - ${month}`;
+    entries.push({ id: idCounter++, type: 'in', amount: other, desc: label, date, deposit: 0 });
+  }
+
+  if (billsTotal > 0) {
+    entries.push({ id: idCounter++, type: 'out', amount: billsTotal, desc: `Monthly bills - ${month}`, date, deposit: 0 });
+  }
+
+  if (toWedding > 0) {
+    const isDeposit = confirm(`Send £${fmt(toWedding)} to the wedding fund. Counts towards deposit?`);
+    entries.push({ id: idCounter++, type: 'save', amount: toWedding, desc: `Wedding fund - ${month}`, date, deposit: isDeposit ? 1 : 0 });
+  }
+
+  state.transactions.push(...entries);
+  save();
+
+  document.getElementById('incomeMe').value = '';
+  document.getElementById('incomeChay').value = '';
+  document.getElementById('incomeOther').value = '';
+  document.getElementById('incomeOtherNote').value = '';
+  renderAll();
+  alert(`Logged ${entries.length} entries`);
+}
+
 function txItemHTML(t) {
-  const sign = t.type === 'in' ? '+' : (t.type === 'out' ? '-' : '→');
   const d = new Date(t.date);
   const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   const tag = t.type === 'save' ? (t.deposit ? '<span class="tag deposit">Deposit</span>' : '<span class="tag savings">Fund</span>') :
@@ -1419,6 +1750,8 @@ function renderSettings() {
   document.getElementById('setDate').value = state.weddingDate;
   document.getElementById('setDepositDate').value = state.depositDate;
   document.getElementById('setRate').value = state.eurRate;
+  document.getElementById('setSalary').value = state.typicalSalary || '';
+  document.getElementById('setChay').value = state.typicalChay || '';
 }
 
 function saveSettings() {
@@ -1427,12 +1760,16 @@ function saveSettings() {
   const wd = document.getElementById('setDate').value;
   const dd = document.getElementById('setDepositDate').value;
   const r = parseFloat(document.getElementById('setRate').value);
+  const sal = parseFloat(document.getElementById('setSalary').value);
+  const chaySal = parseFloat(document.getElementById('setChay').value);
 
   if (g > 0) state.goal = g;
   if (d > 0) state.deposit = d;
   if (wd) state.weddingDate = wd;
   if (dd) state.depositDate = dd;
   if (r > 0) state.eurRate = r;
+  if (sal >= 0) state.typicalSalary = sal || 0;
+  if (chaySal >= 0) state.typicalChay = chaySal || 0;
 
   save();
   renderAll();
@@ -1489,6 +1826,7 @@ function renderAll() {
   renderMoney();
   renderBills();
   renderWishlist();
+  renderSorter();
 }
 
 document.querySelectorAll('.modal').forEach(m => {
