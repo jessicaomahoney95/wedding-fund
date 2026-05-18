@@ -2156,11 +2156,25 @@ function showDebug() {
   } else {
     txList = '(none)';
   }
+
+  // Try each render and report errors
+  const errors = [];
+  try { renderHome(); } catch(e) { errors.push('renderHome: ' + e.message); }
+  try { renderMoney(); } catch(e) { errors.push('renderMoney: ' + e.message); }
+  try { renderBills(); } catch(e) { errors.push('renderBills: ' + e.message); }
+  try { renderWishlist(); } catch(e) { errors.push('renderWishlist: ' + e.message); }
+  try { renderSorter(); } catch(e) { errors.push('renderSorter: ' + e.message); }
+  try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
+  try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
+
   el.textContent = `Transactions in state: ${txCount}
 Bills in state: ${billCount}
 
 Transactions list:
 ${txList}
+
+Errors:
+${errors.length > 0 ? errors.join('\n') : '(none)'}
 
 Raw localStorage length: ${raw ? raw.length : 0} chars
 Storage key: ${STORAGE_KEY}`;
@@ -2320,13 +2334,13 @@ function renderTotals() {
 }
 
 function renderAll() {
-  renderHome();
-  renderMoney();
-  renderBills();
-  renderWishlist();
-  renderSorter();
-  renderUpcoming();
-  renderTotals();
+  try { renderHome(); } catch(e) { console.error('renderHome:', e); }
+  try { renderMoney(); } catch(e) { console.error('renderMoney:', e); }
+  try { renderBills(); } catch(e) { console.error('renderBills:', e); }
+  try { renderWishlist(); } catch(e) { console.error('renderWishlist:', e); }
+  try { renderSorter(); } catch(e) { console.error('renderSorter:', e); }
+  try { renderUpcoming(); } catch(e) { console.error('renderUpcoming:', e); }
+  try { renderTotals(); } catch(e) { console.error('renderTotals:', e); }
 }
 
 document.querySelectorAll('.modal').forEach(m => {
