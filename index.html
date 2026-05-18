@@ -1082,6 +1082,21 @@
     <div class="subtitle" id="dailyAllowanceDetail" style="margin-top: 8px;"></div>
   </div>
 
+  <div class="card" id="christmasCard">
+    <h2>Christmas savings</h2>
+    <p class="subtitle" id="christmasSubtitle">Round-ups going to your Christmas pot</p>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">This cycle</div>
+        <div class="stat-value" id="christmasCycle">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">All time</div>
+        <div class="stat-value" id="christmasTotal">£0</div>
+      </div>
+    </div>
+  </div>
+
   <div class="card" id="paceCard">
     <h2>Pace</h2>
     <p class="subtitle" id="paceSubtitle">How you're tracking vs the cycle</p>
@@ -1100,7 +1115,7 @@
 
   <div class="card" id="quickLogCard">
     <h2>Quick log</h2>
-    <p class="subtitle">One-tap for usual spends — opens prefilled</p>
+    <p class="subtitle">One tap to add a spend — opens with category set, you type the amount</p>
     <div class="quick-log-grid" id="quickLogGrid"></div>
   </div>
 
@@ -1427,7 +1442,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v12 · quick log, pace tracker, payday recap</p>
+    <p class="subtitle">Version: v14 · round-up prediction + Christmas savings card</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1762,12 +1777,12 @@ const defaultState = {
   ],
   wishlist: [],
   quickLogs: [
-    { id: 1, name: 'Groceries', category: 'Groceries', amount: 30 },
-    { id: 2, name: 'Coffee', category: 'Eating out', amount: 4.50 },
-    { id: 3, name: 'Lunch', category: 'Eating out', amount: 8 },
-    { id: 4, name: 'Petrol', category: 'Transport', amount: 60 },
-    { id: 5, name: 'Takeaway', category: 'Eating out', amount: 25 },
-    { id: 6, name: 'Treat', category: 'Shopping', amount: 15 }
+    { id: 1, name: 'Groceries', category: 'Groceries' },
+    { id: 2, name: 'Eating out', category: 'Eating out' },
+    { id: 3, name: 'Coffee', category: 'Eating out' },
+    { id: 4, name: 'Petrol', category: 'Transport' },
+    { id: 5, name: 'Shopping', category: 'Shopping' },
+    { id: 6, name: 'Other', category: 'General' }
   ],
   dismissedRecaps: [],
   sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
@@ -2096,12 +2111,40 @@ function saveTx() {
     desc,
     date,
     deposit: currentTxType === 'save' ? currentTxDeposit : 0,
-    category
+    category,
+    billId: null
   });
+
+  // Round-up prediction: if it's an out transaction and not a whole pound, offer round-up
+  let roundUp = 0;
+  if (currentTxType === 'out') {
+    const rounded = Math.ceil(amount);
+    roundUp = +(rounded - amount).toFixed(2);
+  }
 
   save();
   closeModal('tx');
   renderAll();
+
+  // Show round-up prompt after the modal closes
+  if (roundUp > 0 && roundUp < 1) {
+    setTimeout(() => {
+      if (confirm(`Round up ${(roundUp * 100).toFixed(0)}p to Christmas savings?\n\n£${amount.toFixed(2)} spent → round up to £${Math.ceil(amount).toFixed(2)}`)) {
+        state.transactions.push({
+          id: Date.now() + 1,
+          type: 'out',
+          amount: roundUp,
+          desc: `Round up: ${desc}`,
+          date,
+          deposit: 0,
+          category: 'Savings',
+          billId: null
+        });
+        save();
+        renderAll();
+      }
+    }, 250);
+  }
 }
 
 function saveBill() {
@@ -2228,92 +2271,131 @@ function getMonthsUntil(dateStr) {
 }
 
 function renderHome() {
-  const { saved, depositSaved, monthIn, monthOut, monthSaved } = getTotals();
-  const depCirc = 2 * Math.PI * 50;
+  let monthIn = 0, monthOut = 0, monthSaved = 0, saved = 0, depositSaved = 0;
+  try {
+    const totals = getTotals();
+    saved = totals.saved; depositSaved = totals.depositSaved;
+    monthIn = totals.monthIn; monthOut = totals.monthOut; monthSaved = totals.monthSaved;
+  } catch(e) { console.error('getTotals failed:', e); }
 
-  const depPct = state.deposit > 0 ? Math.min(100, (depositSaved / state.deposit) * 100) : 0;
-  document.getElementById('depositRing').style.strokeDashoffset = depCirc - (depCirc * depPct / 100);
-  document.getElementById('depositPct').textContent = Math.round(depPct) + '%';
-  document.getElementById('depositSaved').textContent = fmtMoney(depositSaved);
-  document.getElementById('depositGoal').textContent = fmtMoney(state.deposit);
-  document.getElementById('depositRemaining').textContent = fmtMoney(Math.max(0, state.deposit - depositSaved));
-  if (document.activeElement.id !== 'quickDeposit') {
-    document.getElementById('quickDeposit').value = state.deposit;
+  try {
+    const depCirc = 2 * Math.PI * 50;
+    const depPct = state.deposit > 0 ? Math.min(100, (depositSaved / state.deposit) * 100) : 0;
+    document.getElementById('depositRing').style.strokeDashoffset = depCirc - (depCirc * depPct / 100);
+    document.getElementById('depositPct').textContent = Math.round(depPct) + '%';
+    document.getElementById('depositSaved').textContent = fmtMoney(depositSaved);
+    document.getElementById('depositGoal').textContent = fmtMoney(state.deposit);
+    document.getElementById('depositRemaining').textContent = fmtMoney(Math.max(0, state.deposit - depositSaved));
+    if ((document.activeElement && document.activeElement.id) !== 'quickDeposit') {
+      document.getElementById('quickDeposit').value = state.deposit;
+    }
+
+    const wedPct = state.goal > 0 ? Math.min(100, (saved / state.goal) * 100) : 0;
+    document.getElementById('weddingRing').style.strokeDashoffset = depCirc - (depCirc * wedPct / 100);
+    document.getElementById('weddingPct').textContent = Math.round(wedPct) + '%';
+    document.getElementById('weddingSaved').textContent = fmtMoney(saved);
+    document.getElementById('weddingGoal').textContent = fmtMoney(state.goal);
+    document.getElementById('weddingEur').textContent = '≈ €' + fmt(state.goal * state.eurRate);
+    if ((document.activeElement && document.activeElement.id) !== 'quickGoal') {
+      document.getElementById('quickGoal').value = state.goal;
+    }
+  } catch(e) { console.error('rings render failed:', e); }
+
+  try {
+    const months = getMonthsUntil(state.weddingDate);
+    const remaining = Math.max(0, state.goal - saved);
+    const monthly = months > 0 ? remaining / months : remaining;
+    document.getElementById('monthlyTarget').textContent = fmtMoney(monthly);
+    const days = getDaysUntil(state.weddingDate);
+    document.getElementById('daysLeft').textContent = days !== null ? days : '—';
+    if (state.weddingDate) {
+      const d = new Date(state.weddingDate);
+      document.getElementById('weddingDateLabel').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+  } catch(e) { console.error('countdown render failed:', e); }
+
+  try {
+    document.getElementById('monthIn').textContent = fmtMoney(monthIn);
+    document.getElementById('monthOut').textContent = fmtMoney(monthOut);
+    document.getElementById('monthSaved').textContent = fmtMoney(monthSaved);
+    const net = monthIn - monthOut - monthSaved;
+    const netEl = document.getElementById('monthNet');
+    netEl.textContent = (net < 0 ? '-£' : '£') + fmt(Math.abs(net));
+    netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
+  } catch(e) { console.error('this month stats failed:', e); }
+
+  // Daily allowance — always run, isolate failure
+  let cycle, daysToPayday, availableToSpend;
+  try {
+    cycle = getSalaryMonth();
+    const today = new Date();
+    let nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth());
+    const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (todayMid >= nextPayday) {
+      nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth() + 1);
+    }
+    const msPerDay = 1000 * 60 * 60 * 24;
+    daysToPayday = Math.max(1, Math.ceil((nextPayday - todayMid) / msPerDay));
+
+    const unpaidBillsTotal = state.bills
+      .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
+      .reduce((s, b) => s + b.amount, 0);
+
+    const net = monthIn - monthOut - monthSaved;
+    availableToSpend = net - unpaidBillsTotal;
+    const dailyAllowance = availableToSpend / daysToPayday;
+
+    const dailyEl = document.getElementById('dailyAllowance');
+    if (dailyEl) {
+      dailyEl.textContent = (dailyAllowance < 0 ? '-£' : '£') + fmt(Math.abs(dailyAllowance)) + '/day';
+      dailyEl.className = 'big-number ' + (dailyAllowance >= 0 ? 'positive' : 'negative');
+    }
+    const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    let detail = `That's £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'left'} spread across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
+    if (unpaidBillsTotal > 0) {
+      detail += `, after holding back £${fmt(unpaidBillsTotal)} for bills still due this cycle.`;
+    } else {
+      detail += '.';
+    }
+    const detailEl = document.getElementById('dailyAllowanceDetail');
+    if (detailEl) detailEl.textContent = detail;
+  } catch(e) {
+    console.error('daily allowance failed:', e);
+    const dailyEl = document.getElementById('dailyAllowance');
+    if (dailyEl) dailyEl.textContent = '—';
   }
 
-  const wedPct = state.goal > 0 ? Math.min(100, (saved / state.goal) * 100) : 0;
-  document.getElementById('weddingRing').style.strokeDashoffset = depCirc - (depCirc * wedPct / 100);
-  document.getElementById('weddingPct').textContent = Math.round(wedPct) + '%';
-  document.getElementById('weddingSaved').textContent = fmtMoney(saved);
-  document.getElementById('weddingGoal').textContent = fmtMoney(state.goal);
-  document.getElementById('weddingEur').textContent = '≈ €' + fmt(state.goal * state.eurRate);
-  if (document.activeElement.id !== 'quickGoal') {
-    document.getElementById('quickGoal').value = state.goal;
-  }
+  try {
+    const recent = [...state.transactions].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id).slice(0, 5);
+    const recentEl = document.getElementById('recentList');
+    if (recent.length === 0) {
+      recentEl.innerHTML = '<div class="empty">No transactions yet. Tap the + button to add one.</div>';
+    } else {
+      recentEl.innerHTML = recent.map(t => txItemHTML(t)).join('');
+    }
+  } catch(e) { console.error('recent render failed:', e); }
 
-  const months = getMonthsUntil(state.weddingDate);
-  const remaining = Math.max(0, state.goal - saved);
-  const monthly = months > 0 ? remaining / months : remaining;
-  document.getElementById('monthlyTarget').textContent = fmtMoney(monthly);
+  // Pace, quick log, recap — each in their own try/catch
+  try { if (cycle && daysToPayday && availableToSpend !== undefined) renderPace(cycle, daysToPayday, availableToSpend, monthOut); } catch(e) { console.error('pace failed:', e); }
+  try { renderQuickLog(); } catch(e) { console.error('quickLog failed:', e); }
+  try { renderPaydayRecap(); } catch(e) { console.error('paydayRecap failed:', e); }
+  try { renderChristmas(cycle); } catch(e) { console.error('christmas failed:', e); }
+}
 
-  const days = getDaysUntil(state.weddingDate);
-  document.getElementById('daysLeft').textContent = days !== null ? days : '—';
-  if (state.weddingDate) {
-    const d = new Date(state.weddingDate);
-    document.getElementById('weddingDateLabel').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  document.getElementById('monthIn').textContent = fmtMoney(monthIn);
-  document.getElementById('monthOut').textContent = fmtMoney(monthOut);
-  document.getElementById('monthSaved').textContent = fmtMoney(monthSaved);
-  const net = monthIn - monthOut - monthSaved;
-  const netEl = document.getElementById('monthNet');
-  netEl.textContent = (net < 0 ? '-£' : '£') + fmt(Math.abs(net));
-  netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
-
-  // Daily allowance
-  const cycle = getSalaryMonth();
-  const today = new Date();
-  let nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth());
-  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  if (todayMid >= nextPayday) {
-    nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth() + 1);
-  }
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysToPayday = Math.max(1, Math.ceil((nextPayday - todayMid) / msPerDay));
-
-  const unpaidBillsTotal = state.bills
-    .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
-    .reduce((s, b) => s + b.amount, 0);
-
-  const availableToSpend = net - unpaidBillsTotal;
-  const dailyAllowance = availableToSpend / daysToPayday;
-  const dailyEl = document.getElementById('dailyAllowance');
-  dailyEl.textContent = (dailyAllowance < 0 ? '-£' : '£') + fmt(Math.abs(dailyAllowance)) + '/day';
-  dailyEl.className = 'big-number ' + (dailyAllowance >= 0 ? 'positive' : 'negative');
-  const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-  let detail = `That's £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'left'} spread across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
-  if (unpaidBillsTotal > 0) {
-    detail += `, after holding back £${fmt(unpaidBillsTotal)} for bills still due this cycle.`;
-  } else {
-    detail += '.';
-  }
-  document.getElementById('dailyAllowanceDetail').textContent = detail;
-
-  const recent = [...state.transactions].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id).slice(0, 5);
-  const recentEl = document.getElementById('recentList');
-  if (recent.length === 0) {
-    recentEl.innerHTML = '<div class="empty">No transactions yet. Tap the + button to add one.</div>';
-  } else {
-    recentEl.innerHTML = recent.map(t => txItemHTML(t)).join('');
-  }
-
-  // Pace tracker: where are we in the cycle vs how much we've spent?
-  renderPace(cycle, daysToPayday, availableToSpend, monthOut);
-  // Quick log buttons
-  renderQuickLog();
-  // Payday recap (only show if it's actually payday or just after)
-  renderPaydayRecap();
+function renderChristmas(cycle) {
+  // Any 'out' transaction with category 'Savings' is a round-up to Christmas pot
+  let cycleTotal = 0;
+  let allTime = 0;
+  state.transactions.forEach(t => {
+    if (t.type === 'out' && t.category === 'Savings') {
+      allTime += t.amount;
+      if (payCycleForStr(t.date) === cycle) cycleTotal += t.amount;
+    }
+  });
+  const cycleEl = document.getElementById('christmasCycle');
+  const totalEl = document.getElementById('christmasTotal');
+  if (cycleEl) cycleEl.textContent = fmtMoney(cycleTotal);
+  if (totalEl) totalEl.textContent = fmtMoney(allTime);
 }
 
 function renderPace(cycle, daysToPayday, availableToSpend, monthOut) {
@@ -2369,7 +2451,7 @@ function renderQuickLog() {
   el.innerHTML = state.quickLogs.map(q => `
     <button class="quick-log-btn" onclick="quickLog(${q.id})">
       <span class="ql-name">${escapeHtml(q.name)}</span>
-      <span class="ql-amt">£${fmt(q.amount)}</span>
+      <span class="ql-amt">${escapeHtml(q.category)}</span>
     </button>
   `).join('');
 }
@@ -2377,16 +2459,17 @@ function renderQuickLog() {
 function quickLog(id) {
   const ql = state.quickLogs.find(q => q.id === id);
   if (!ql) return;
-  // Open the tx modal pre-filled
   openModal('tx');
-  // Force "out" type
   currentTxType = 'out';
   updateTxSeg();
   updateTxDepositVisibility();
-  document.getElementById('txAmount').value = ql.amount;
+  // Leave amount blank for user to type
+  document.getElementById('txAmount').value = '';
   document.getElementById('txDesc').value = ql.name;
   document.getElementById('txDate').value = todayStr();
   document.getElementById('txCategory').value = ql.category;
+  // Focus the amount field so they can just type the number
+  setTimeout(() => document.getElementById('txAmount').focus(), 100);
 }
 
 function renderPaydayRecap() {
@@ -2860,7 +2943,7 @@ function renderQuickLogSettings() {
     <div class="item">
       <div class="item-info">
         <div class="item-title">${escapeHtml(q.name)}</div>
-        <div class="item-meta">${escapeHtml(q.category)} · £${fmt(q.amount)}</div>
+        <div class="item-meta">${escapeHtml(q.category)}</div>
       </div>
       <button class="item-del" onclick="deleteQuickLog(${q.id})">×</button>
     </div>
@@ -2868,15 +2951,12 @@ function renderQuickLogSettings() {
 }
 
 function addQuickLog() {
-  const name = prompt('What\'s this shortcut for? (e.g. Groceries, Petrol, Coffee)');
+  const name = prompt('Shortcut name (e.g. Groceries, Eating out, Petrol)');
   if (!name) return;
-  const amountStr = prompt('Typical amount (£)?');
-  const amount = parseFloat(amountStr);
-  if (isNaN(amount) || amount <= 0) { alert('Invalid amount'); return; }
   const category = prompt('Category? (Groceries, Eating out, Shopping, Transport, Entertainment, Holidays, Bills, General)', 'General');
   if (!category) return;
   const id = (state.quickLogs.reduce((m, q) => Math.max(m, q.id), 0) || 0) + 1;
-  state.quickLogs.push({ id, name, category, amount });
+  state.quickLogs.push({ id, name, category });
   save();
   renderQuickLogSettings();
   renderHome();
@@ -3182,7 +3262,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v12
+  el.textContent = `VERSION: v14
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
