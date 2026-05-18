@@ -956,7 +956,7 @@
   <button class="tab active" data-view="home">Home</button>
   <button class="tab" data-view="money">Money</button>
   <button class="tab" data-view="bills">Bills</button>
-  <button class="tab" data-view="wishlist">Wants</button>
+  <button class="tab" data-view="wishlist">Future</button>
   <button class="tab" data-view="totals">Totals</button>
   <button class="tab" data-view="settings">Settings</button>
 </div>
@@ -1254,13 +1254,32 @@
 
 <div class="view" id="view-wishlist">
   <div class="header">
-    <div class="eyebrow">Other things you'd like</div>
-    <h1>Want list</h1>
+    <div class="eyebrow">What's coming up and what you'd like</div>
+    <h1>Future spending</h1>
   </div>
 
   <div class="card">
-    <h2>Total wants</h2>
-    <p class="subtitle">Holidays, clothes, garden, chickens, anything that isn't bills or wedding</p>
+    <h2>Upcoming events</h2>
+    <p class="subtitle">Spending you've already committed to. Reduces your daily allowance.</p>
+    <div class="stat-grid" style="margin-bottom: 12px;">
+      <div class="stat">
+        <div class="stat-label">Set aside</div>
+        <div class="stat-value" id="eventsSetAside">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Next event</div>
+        <div class="stat-value" id="eventsNext">—</div>
+      </div>
+    </div>
+    <div class="item-list" id="eventsList">
+      <div class="empty">Nothing planned. Add things like a trip, a birthday, an MOT — anything coming up that needs money set aside.</div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="openModal('event')" style="margin-top: 12px;">Add an event</button>
+  </div>
+
+  <div class="card">
+    <h2>Wants</h2>
+    <p class="subtitle">No date, just things you'd like — clothes, chickens, gifts</p>
     <div class="big-amount"><span class="currency">£</span><span id="wishTotal">0</span></div>
     <div class="wish-totals">
       <div class="stat">
@@ -1276,7 +1295,7 @@
         <div class="stat-value" id="wishNice">£0</div>
       </div>
     </div>
-    <button class="btn btn-primary btn-full" onclick="openModal('wish')" style="margin-top: 12px;">Add to want list</button>
+    <button class="btn btn-primary btn-full" onclick="openModal('wish')" style="margin-top: 12px;">Add a want</button>
   </div>
 
   <div id="budgetCompare"></div>
@@ -1298,7 +1317,7 @@
   </div>
 
   <div class="card">
-    <h2>Items</h2>
+    <h2>Want list</h2>
     <div class="item-list" id="wishList">
       <div class="empty">Nothing on the list yet. Add things you'd like but haven't bought — a trip, new boots, more chickens, anything that isn't a wedding cost.</div>
     </div>
@@ -1451,7 +1470,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v17 · Christmas balance includes logged round-ups</p>
+    <p class="subtitle">Version: v18 · upcoming events + daily allowance reflects them</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1629,6 +1648,35 @@
   </div>
 </div>
 
+<div class="modal" id="modalEvent">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('event')">×</button>
+    <h2>New event</h2>
+
+    <div class="field">
+      <label>What is it?</label>
+      <input type="text" id="eventName" placeholder="e.g. Margate trip, Tom's birthday, MOT">
+    </div>
+
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="eventDate">
+    </div>
+
+    <div class="field">
+      <label>Estimated spend (GBP)</label>
+      <input type="number" id="eventAmount" inputmode="decimal" placeholder="0.00" step="0.01">
+    </div>
+
+    <div class="field">
+      <label>Notes (optional)</label>
+      <textarea id="eventNotes" rows="2" placeholder="Any details"></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="saveEvent()">Save event</button>
+  </div>
+</div>
+
 <script>
 const STORAGE_KEY = 'wedding-fund-jess-v2';
 
@@ -1786,6 +1834,7 @@ const defaultState = {
     {"id": 18, "name": "O2", "amount": 27.67, "fixed": 1, "account": "joint", "day": 18, "paidMonths": ["2026-05"]}
   ],
   wishlist: [],
+  events: [],
   quickLogs: [
     { id: 1, name: 'Groceries', category: 'Groceries' },
     { id: 2, name: 'Eating out', category: 'Eating out' },
@@ -1823,6 +1872,7 @@ function load() {
       // Quick log + recap defaults for older saves
       if (!merged.quickLogs) merged.quickLogs = defaultState.quickLogs;
       if (!merged.dismissedRecaps) merged.dismissedRecaps = [];
+      if (!merged.events) merged.events = [];
       if (merged.christmasStart === undefined) merged.christmasStart = defaultState.christmasStart;
       return merged;
     }
@@ -1958,6 +2008,12 @@ function openModal(type) {
     currentWishPriority = 'must';
     updateWishSeg();
     document.getElementById('modalWish').classList.add('open');
+  } else if (type === 'event') {
+    document.getElementById('eventName').value = '';
+    document.getElementById('eventDate').value = '';
+    document.getElementById('eventAmount').value = '';
+    document.getElementById('eventNotes').value = '';
+    document.getElementById('modalEvent').classList.add('open');
   } else if (type === 'batch') {
     document.getElementById('batchDate').value = todayStr();
     document.getElementById('batchRows').innerHTML = '';
@@ -1969,7 +2025,7 @@ function openModal(type) {
 }
 
 function closeModal(type) {
-  const map = { tx: 'modalTx', bill: 'modalBill', wish: 'modalWish', batch: 'modalBatch' };
+  const map = { tx: 'modalTx', bill: 'modalBill', wish: 'modalWish', event: 'modalEvent', batch: 'modalBatch' };
   document.getElementById(map[type]).classList.remove('open');
 }
 
@@ -2234,6 +2290,119 @@ function deleteWish(id) {
   renderAll();
 }
 
+function saveEvent() {
+  const name = document.getElementById('eventName').value.trim();
+  const date = document.getElementById('eventDate').value;
+  const amount = parseFloat(document.getElementById('eventAmount').value);
+  const notes = document.getElementById('eventNotes').value.trim();
+
+  if (!name) { alert('Add a name'); return; }
+  if (!date) { alert('Pick a date'); return; }
+  if (!amount || amount <= 0) { alert('Enter an estimated spend'); return; }
+
+  if (!state.events) state.events = [];
+  state.events.push({
+    id: Date.now(),
+    name,
+    date,
+    amount,
+    notes
+  });
+  save();
+  closeModal('event');
+  renderAll();
+}
+
+function deleteEvent(id) {
+  if (!confirm('Delete this event?')) return;
+  state.events = (state.events || []).filter(e => e.id !== id);
+  save();
+  renderAll();
+}
+
+function getUpcomingEventsTotal() {
+  // Sum of all events with date today or later
+  if (!state.events || state.events.length === 0) return 0;
+  const today = todayStr();
+  return state.events
+    .filter(e => e.date >= today)
+    .reduce((s, e) => s + e.amount, 0);
+}
+
+function getEventsBeforePayday(paydayDate) {
+  // Sum of events between today and next payday (exclusive)
+  if (!state.events || state.events.length === 0) return 0;
+  const today = todayStr();
+  const payday = `${paydayDate.getFullYear()}-${String(paydayDate.getMonth() + 1).padStart(2, '0')}-${String(paydayDate.getDate()).padStart(2, '0')}`;
+  return state.events
+    .filter(e => e.date >= today && e.date < payday)
+    .reduce((s, e) => s + e.amount, 0);
+}
+
+function renderEvents() {
+  const setAsideEl = document.getElementById('eventsSetAside');
+  const nextEl = document.getElementById('eventsNext');
+  const listEl = document.getElementById('eventsList');
+  if (!listEl) return;
+
+  const today = todayStr();
+  const upcoming = (state.events || []).filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+  const past = (state.events || []).filter(e => e.date < today).sort((a, b) => b.date.localeCompare(a.date));
+
+  const totalUpcoming = upcoming.reduce((s, e) => s + e.amount, 0);
+  setAsideEl.textContent = fmtMoney(totalUpcoming);
+
+  if (upcoming.length === 0) {
+    nextEl.textContent = '—';
+    listEl.innerHTML = '<div class="empty">Nothing planned. Add things like a trip, a birthday, an MOT — anything coming up that needs money set aside.</div>';
+    return;
+  }
+
+  const next = upcoming[0];
+  const nextDate = new Date(next.date);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const daysUntil = Math.round((nextDate - todayDate) / 86400000);
+  nextEl.textContent = daysUntil === 0 ? 'today' : (daysUntil === 1 ? 'tomorrow' : `${daysUntil}d`);
+
+  let html = upcoming.map(e => {
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const days = Math.round((d - todayDate) / 86400000);
+    const dayLabel = days === 0 ? 'today' : (days === 1 ? 'tomorrow' : `in ${days}d`);
+    return `
+      <div class="item">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(e.name)}</div>
+          <div class="item-meta">${dateStr} · ${dayLabel}${e.notes ? ' · ' + escapeHtml(e.notes) : ''}</div>
+        </div>
+        <div class="item-amount out">-£${fmt(e.amount)}</div>
+        <button class="item-del" onclick="deleteEvent(${e.id})">×</button>
+      </div>
+    `;
+  }).join('');
+
+  if (past.length > 0) {
+    html += `<div class="subtitle" style="margin: 12px 0 6px; font-size: 12px;">Past events</div>`;
+    html += past.slice(0, 5).map(e => {
+      const d = new Date(e.date);
+      const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `
+        <div class="item" style="opacity: 0.5;">
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(e.name)}</div>
+            <div class="item-meta">${dateStr}</div>
+          </div>
+          <div class="item-amount out">-£${fmt(e.amount)}</div>
+          <button class="item-del" onclick="deleteEvent(${e.id})">×</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  listEl.innerHTML = html;
+}
+
 function getTotals() {
   let saved = 0, depositSaved = 0;
   let monthIn = 0, monthOut = 0, monthSaved = 0;
@@ -2353,8 +2522,11 @@ function renderHome() {
       .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
       .reduce((s, b) => s + b.amount, 0);
 
+    // Events between today and payday — pre-committed spending
+    const eventsBeforePayday = getEventsBeforePayday(nextPayday);
+
     const net = monthIn - monthOut - monthSaved;
-    availableToSpend = net - unpaidBillsTotal;
+    availableToSpend = net - unpaidBillsTotal - eventsBeforePayday;
     const dailyAllowance = availableToSpend / daysToPayday;
 
     const dailyEl = document.getElementById('dailyAllowance');
@@ -2364,8 +2536,11 @@ function renderHome() {
     }
     const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
     let detail = `That's £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'left'} spread across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
-    if (unpaidBillsTotal > 0) {
-      detail += `, after holding back £${fmt(unpaidBillsTotal)} for bills still due this cycle.`;
+    const holdbacks = [];
+    if (unpaidBillsTotal > 0) holdbacks.push(`£${fmt(unpaidBillsTotal)} for bills`);
+    if (eventsBeforePayday > 0) holdbacks.push(`£${fmt(eventsBeforePayday)} for upcoming events`);
+    if (holdbacks.length > 0) {
+      detail += `, after holding back ${holdbacks.join(' and ')}.`;
     } else {
       detail += '.';
     }
@@ -2846,6 +3021,9 @@ function renderBills() {
 }
 
 function renderWishlist() {
+  // === Events ===
+  renderEvents();
+
   const { must, want, nice, total } = getWishTotals();
   document.getElementById('wishTotal').textContent = fmt(total);
   document.getElementById('wishMust').textContent = fmtMoney(must);
@@ -3307,7 +3485,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v17
+  el.textContent = `VERSION: v18
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
