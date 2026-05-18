@@ -1213,6 +1213,13 @@
   </div>
 
   <div class="card">
+    <h2>Debug</h2>
+    <p class="subtitle">Show what's actually stored</p>
+    <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
+    <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
+  </div>
+
+  <div class="card">
     <h2>Danger zone</h2>
     <p class="subtitle">This clears everything. There's no undo.</p>
     <button class="btn btn-ghost btn-full" onclick="resetAll()" style="color: var(--rust); border-color: var(--rust);">Reset all data</button>
@@ -2134,6 +2141,30 @@ document.getElementById('importFile').addEventListener('change', (e) => {
   };
   reader.readAsText(file);
 });
+
+function showDebug() {
+  const el = document.getElementById('debugOutput');
+  el.style.display = 'block';
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const txCount = state.transactions ? state.transactions.length : 0;
+  const billCount = state.bills ? state.bills.length : 0;
+  let txList = '';
+  if (state.transactions && state.transactions.length > 0) {
+    txList = state.transactions.map((t, i) =>
+      `${i+1}. ${t.type} £${t.amount} - ${t.desc} (${t.date})`
+    ).join('\n');
+  } else {
+    txList = '(none)';
+  }
+  el.textContent = `Transactions in state: ${txCount}
+Bills in state: ${billCount}
+
+Transactions list:
+${txList}
+
+Raw localStorage length: ${raw ? raw.length : 0} chars
+Storage key: ${STORAGE_KEY}`;
+}
 
 function resetAll() {
   if (!confirm('This deletes everything. Are you sure?')) return;
