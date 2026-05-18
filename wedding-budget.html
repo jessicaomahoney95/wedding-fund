@@ -1,0 +1,2977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#243B5C">
+<title>Wedding fund</title>
+<style>
+  :root {
+    --blue-deep: #243B5C;
+    --blue-mid: #34528A;
+    --blue-soft: #6B8FB5;
+    --blue-pale: #D4DEEC;
+    --sand: #E8DFD0;
+    --sand-light: #EFE7D9;
+    --sand-dark: #D6CAB3;
+    --ink: #1A2436;
+    --ink-soft: #4A5468;
+    --olive: #5B6E3F;
+    --rust: #8E3D26;
+    --gold: #B8893D;
+    --accent: #6B8FB5;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--blue-deep);
+    color: var(--ink);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  html {
+    background: var(--blue-deep);
+    min-height: 100vh;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--blue-deep);
+  }
+
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--blue-deep);
+    padding: env(safe-area-inset-top) 0 0 0;
+    display: flex;
+    border-bottom: 1px solid var(--blue-mid);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 14px 2px 12px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: var(--sand);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    opacity: 0.55;
+    border-bottom: 2px solid transparent;
+    transition: opacity 0.2s ease;
+  }
+
+  .tab.active {
+    opacity: 1;
+    border-bottom-color: var(--sand);
+  }
+
+  .view { display: none; padding: 16px 14px 80px; }
+  .view.active { display: block; }
+
+  .card {
+    background: var(--sand);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 0 var(--blue-mid);
+  }
+
+  .card-soft { background: var(--sand-light); }
+
+  h1 {
+    font-family: 'Georgia', serif;
+    font-weight: 400;
+    font-size: 28px;
+    margin: 0 0 4px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+
+  h2 {
+    font-family: 'Georgia', serif;
+    font-weight: 400;
+    font-size: 18px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    font-style: italic;
+  }
+
+  .big-amount {
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--blue-mid);
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+
+  .big-amount .currency {
+    font-size: 22px;
+    opacity: 0.7;
+    margin-right: 2px;
+  }
+
+  .eur-equiv {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .ring-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 10px 0 4px;
+  }
+
+  .ring-wrap {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+  }
+
+  .ring-wrap svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .ring-track {
+    fill: none;
+    stroke: var(--sand-dark);
+    stroke-width: 10;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: var(--blue-mid);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease;
+  }
+
+  .ring-fill.deposit { stroke: var(--gold); }
+
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .ring-pct {
+    font-size: 20px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .ring-label {
+    font-size: 10px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  .ring-info { flex: 1; }
+
+  .ring-info .saved {
+    font-size: 22px;
+    color: var(--blue-mid);
+    font-weight: 500;
+  }
+
+  .ring-info .of-goal {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .ring-info .per-month {
+    font-size: 13px;
+    color: var(--ink);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--sand-dark);
+  }
+
+  .ring-info .per-month strong {
+    color: var(--blue-mid);
+    font-weight: 500;
+  }
+
+  .edit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--sand-dark);
+  }
+
+  .edit-row label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+  }
+
+  .edit-row input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--sand-dark);
+    border-radius: 8px;
+    background: var(--sand-light);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+
+  .edit-row input:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .stat {
+    background: var(--sand-light);
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .stat-value.positive { color: var(--olive); }
+  .stat-value.negative { color: var(--rust); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 18px;
+    border-radius: 24px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    min-height: 44px;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--blue-mid);
+    color: var(--sand);
+  }
+
+  .btn-secondary {
+    background: var(--sand-dark);
+    color: var(--ink);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--blue-mid);
+    border: 1px solid var(--sand-dark);
+  }
+
+  .btn-full { width: 100%; }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-row .btn { flex: 1; }
+
+  .item-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--sand-light);
+    border-radius: 12px;
+    gap: 10px;
+  }
+
+  .item-info { flex: 1; min-width: 0; }
+
+  .item-title {
+    font-size: 14px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-meta {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .item-amount {
+    font-size: 15px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .item-amount.in { color: var(--olive); }
+  .item-amount.out { color: var(--rust); }
+  .item-amount.save { color: var(--blue-mid); }
+  .item-amount.wish { color: var(--blue-soft); }
+
+  .item-del {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    padding: 4px 8px;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  .item-del:active { opacity: 1; }
+
+  .item.wish-must { border-left: 3px solid var(--rust); }
+  .item.wish-want { border-left: 3px solid var(--gold); }
+  .item.wish-nice { border-left: 3px solid var(--accent); }
+
+  .field { margin-bottom: 12px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--sand-dark);
+    border-radius: 12px;
+    background: var(--sand-light);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+  }
+
+  .seg {
+    display: flex;
+    background: var(--sand-light);
+    border-radius: 12px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .seg button {
+    flex: 1;
+    padding: 10px 6px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .seg button.active {
+    background: var(--blue-mid);
+    color: var(--sand);
+  }
+
+  .fab {
+    position: fixed;
+    right: 16px;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--sand);
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    z-index: 50;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 36, 54, 0.7);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+  }
+
+  .modal.open { display: flex; }
+
+  .modal-card {
+    background: var(--sand);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-card h2 { margin-top: 0; }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 6px 10px;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 18px 4px 10px;
+  }
+
+  .section-head h3 {
+    font-family: 'Georgia', serif;
+    font-weight: 400;
+    font-size: 15px;
+    margin: 0;
+    color: var(--sand);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-head .link {
+    font-size: 12px;
+    color: var(--sand);
+    opacity: 0.75;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 24px 12px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .countdown { text-align: center; padding: 16px 0 8px; }
+
+  .countdown-num {
+    font-size: 48px;
+    color: var(--blue-mid);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .countdown-lbl {
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  .countdown-date {
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .header { padding: 8px 4px 14px; }
+
+  .sorter-breakdown {
+    margin: 14px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .income-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .income-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .income-field input {
+    width: 100%;
+    padding: 10px 10px;
+    border: 1px solid var(--sand-dark);
+    border-radius: 10px;
+    background: var(--sand-light);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+
+  .income-field input:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+  }
+
+  .pot-summary {
+    margin: 16px 0 6px;
+    padding: 14px;
+    background: var(--sand-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--olive);
+  }
+
+  .pot-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .pot-amount {
+    font-size: 26px;
+    color: var(--olive);
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .pot-breakdown {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .sort-row {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sort-row-total {
+    padding-top: 10px;
+    border-top: 1px solid var(--sand-dark);
+    margin-top: 4px;
+  }
+
+  .sort-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sort-bar {
+    height: 6px;
+    background: var(--sand-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sort-fill {
+    height: 100%;
+    transition: width 0.4s ease;
+    border-radius: 3px;
+  }
+
+  .sort-in { background: var(--olive); }
+  .sort-bills { background: var(--rust); }
+  .sort-wedding { background: var(--blue-mid); }
+  .sort-leftover { background: var(--gold); }
+
+  .sort-amount {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: right;
+    min-width: 60px;
+  }
+
+  .sort-amount.in { color: var(--olive); }
+  .sort-amount.out { color: var(--rust); }
+  .sort-amount.save { color: var(--blue-mid); }
+
+  .batch-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 90px 28px;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: var(--sand-light);
+    border-radius: 10px;
+  }
+
+  .batch-row select,
+  .batch-row input {
+    width: 100%;
+    padding: 8px 6px;
+    border: 1px solid var(--sand-dark);
+    border-radius: 8px;
+    background: var(--sand);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+
+  .batch-row input:focus,
+  .batch-row select:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+  }
+
+  .batch-row .row-del {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 18px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+
+  .batch-row .row-del:active { opacity: 1; }
+
+  .daily-allowance {
+    margin: 12px 0;
+    padding: 14px;
+    background: var(--sand-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--gold);
+    display: none;
+  }
+
+  .daily-allowance.show { display: block; }
+
+  .daily-allowance-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .daily-allowance-amount {
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .daily-allowance-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .sorter-hint {
+    padding: 10px 12px;
+    background: var(--sand-light);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .sorter-hint.warn {
+    background: rgba(142, 61, 38, 0.12);
+    color: var(--rust);
+    font-style: normal;
+  }
+
+  .sorter-hint.empty { display: none; }
+
+  .header .eyebrow {
+    font-size: 11px;
+    color: #D88B6E;
+    opacity: 1;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+
+  .header h1 {
+    color: #D88B6E;
+    margin: 0;
+    font-size: 32px;
+  }
+
+  .small-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--sand-dark);
+    border-radius: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+  }
+
+  .tag.income { background: var(--olive); color: var(--sand-light); }
+  .tag.expense { background: var(--rust); color: var(--sand-light); }
+  .tag.savings { background: var(--blue-mid); color: var(--sand-light); }
+  .tag.deposit { background: var(--gold); color: var(--sand-light); }
+  .tag.must { background: var(--rust); color: var(--sand-light); }
+  .tag.want { background: var(--gold); color: var(--sand-light); }
+  .tag.nice { background: var(--accent); color: var(--sand-light); }
+  .tag.account-joint { background: var(--blue-mid); color: var(--sand-light); }
+  .tag.account-me { background: var(--olive); color: var(--sand-light); }
+  .tag.account-chay { background: var(--accent); color: var(--sand-light); }
+  .tag.varies { background: var(--gold); color: var(--sand-light); }
+  .tag.paid { background: var(--olive); color: var(--sand-light); }
+  .tag.billmatch { background: rgba(124, 142, 114, 0.2); color: var(--olive); font-style: italic; }
+
+  .item.bill-paid {
+    opacity: 0.55;
+  }
+
+  .item.bill-paid .item-amount {
+    text-decoration: line-through;
+  }
+
+  .item.upcoming-today { border-left: 3px solid var(--rust); }
+  .item.upcoming-soon { border-left: 3px solid var(--gold); }
+  .item.upcoming-later { border-left: 3px solid var(--accent); }
+
+  .when-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-right: 6px;
+    font-weight: 500;
+  }
+
+  .when-label.today { color: var(--rust); }
+  .when-label.soon { color: var(--gold); }
+
+  .wish-totals {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .wish-totals .stat {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .wish-totals .stat-value { font-size: 16px; }
+
+  .over-budget,
+  .under-budget {
+    background: var(--sand);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    color: var(--ink);
+    font-size: 13px;
+  }
+
+  .over-budget {
+    border-left: 4px solid var(--rust);
+  }
+
+  .under-budget {
+    border-left: 4px solid var(--olive);
+  }
+
+  .over-budget strong { color: var(--rust); }
+  .under-budget strong { color: var(--olive); }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <button class="tab active" data-view="home">Home</button>
+  <button class="tab" data-view="money">Money</button>
+  <button class="tab" data-view="bills">Bills</button>
+  <button class="tab" data-view="wishlist">Wishlist</button>
+  <button class="tab" data-view="totals">Totals</button>
+  <button class="tab" data-view="settings">Settings</button>
+</div>
+
+<div class="view active" id="view-home">
+  <div class="header">
+    <div class="eyebrow">Wedding fund</div>
+    <h1>April 2028</h1>
+  </div>
+
+  <div class="card">
+    <h2>Deposit</h2>
+    <p class="subtitle">First milestone</p>
+    <div class="ring-container">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-track" cx="60" cy="60" r="50"/>
+          <circle class="ring-fill deposit" id="depositRing" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-pct" id="depositPct">0%</div>
+          <div class="ring-label">of deposit</div>
+        </div>
+      </div>
+      <div class="ring-info">
+        <div class="saved" id="depositSaved">£0</div>
+        <div class="of-goal">of <span id="depositGoal">£6,000</span> goal</div>
+        <div class="per-month">Still need <strong id="depositRemaining">£6,000</strong></div>
+      </div>
+    </div>
+    <div class="edit-row">
+      <label>Goal £</label>
+      <input type="number" id="quickDeposit" inputmode="decimal" onchange="updateQuickBudget()">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Wedding fund total</h2>
+    <p class="subtitle">Everything towards the big day</p>
+    <div class="ring-container">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-track" cx="60" cy="60" r="50"/>
+          <circle class="ring-fill" id="weddingRing" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-pct" id="weddingPct">0%</div>
+          <div class="ring-label">of total</div>
+        </div>
+      </div>
+      <div class="ring-info">
+        <div class="saved" id="weddingSaved">£0</div>
+        <div class="of-goal">of <span id="weddingGoal">£30,000</span> goal</div>
+        <div class="eur-equiv" id="weddingEur">≈ €0</div>
+        <div class="per-month">Save <strong id="monthlyTarget">£0</strong>/month to get there</div>
+      </div>
+    </div>
+    <div class="edit-row">
+      <label>Budget £</label>
+      <input type="number" id="quickGoal" inputmode="decimal" onchange="updateQuickBudget()">
+    </div>
+  </div>
+
+  <div class="card card-soft">
+    <div class="countdown">
+      <div class="countdown-num" id="daysLeft">—</div>
+      <div class="countdown-lbl">days until the wedding</div>
+      <div class="countdown-date" id="weddingDateLabel">Setting wedding date…</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>This month so far</h2>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">In</div>
+        <div class="stat-value positive" id="monthIn">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Out</div>
+        <div class="stat-value negative" id="monthOut">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Saved to fund</div>
+        <div class="stat-value" id="monthSaved">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Net</div>
+        <div class="stat-value" id="monthNet">£0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="upcomingBillsCard" style="display:none;">
+    <h2>Upcoming bills</h2>
+    <p class="subtitle" id="upcomingSubtitle">Today and the days ahead</p>
+    <div class="item-list" id="upcomingList"></div>
+  </div>
+
+  <div class="card" id="sorterCard">
+    <h2>Salary sorter</h2>
+    <p class="subtitle">Combine income, then plan the split</p>
+
+    <div class="income-grid">
+      <div class="income-field">
+        <label>Yours £</label>
+        <input type="number" id="incomeMe" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+      <div class="income-field">
+        <label>Chay's £</label>
+        <input type="number" id="incomeChay" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+      <div class="income-field">
+        <label>Other £</label>
+        <input type="number" id="incomeOther" inputmode="decimal" placeholder="0" step="0.01" oninput="renderSorter()">
+      </div>
+    </div>
+    <div class="field" style="margin-top: 10px;">
+      <label>Other income — what is it?</label>
+      <input type="text" id="incomeOtherNote" placeholder="e.g. Freelance, gift from parents" oninput="renderSorter()">
+    </div>
+
+    <div class="pot-summary">
+      <div class="pot-label">Combined pot this month</div>
+      <div class="pot-amount" id="potTotal">£0</div>
+      <div class="pot-breakdown" id="potBreakdown"></div>
+    </div>
+
+    <div class="sorter-breakdown" id="sorterBreakdown">
+      <div class="sort-row">
+        <div class="sort-label">Monthly bills</div>
+        <div class="sort-bar"><div class="sort-fill sort-bills" style="width:0%"></div></div>
+        <div class="sort-amount out" id="sortBills">£0</div>
+      </div>
+      <div class="sort-row">
+        <div class="sort-label">To wedding fund</div>
+        <div class="sort-bar"><div class="sort-fill sort-wedding" style="width:0%"></div></div>
+        <div class="sort-amount save" id="sortWedding">£0</div>
+      </div>
+      <div class="sort-row sort-row-total">
+        <div class="sort-label">Leftover for you</div>
+        <div class="sort-bar"><div class="sort-fill sort-leftover" style="width:0%"></div></div>
+        <div class="sort-amount" id="sortLeftover">£0</div>
+      </div>
+    </div>
+    <div class="daily-allowance" id="dailyAllowance"></div>
+    <div class="sorter-hint" id="sorterHint"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="useTypicalSalary()">Use typical</button>
+      <button class="btn btn-primary" onclick="logSorterSplit()">Log this split</button>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h3>Recent activity</h3>
+    <button class="link" onclick="switchView('money')">View all</button>
+  </div>
+  <div class="card">
+    <div class="item-list" id="recentList">
+      <div class="empty">No transactions yet. Tap the + button to add one.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-money">
+  <div class="header">
+    <div class="eyebrow">All transactions</div>
+    <h1>Money</h1>
+  </div>
+
+  <div class="card">
+    <div class="seg" id="filterSeg">
+      <button class="active" data-filter="all">All</button>
+      <button data-filter="in">In</button>
+      <button data-filter="out">Out</button>
+      <button data-filter="save">Saved</button>
+    </div>
+    <button class="btn btn-ghost btn-full" onclick="openModal('batch')" style="margin-top: 10px;">Batch add</button>
+  </div>
+
+  <div class="card">
+    <div class="item-list" id="moneyList">
+      <div class="empty">No transactions yet.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-bills">
+  <div class="header">
+    <div class="eyebrow">Recurring bills and subscriptions</div>
+    <h1>Bills</h1>
+  </div>
+
+  <div class="card">
+    <h2>Monthly outgoing</h2>
+    <div class="big-amount"><span class="currency">£</span><span id="billsTotal">0</span></div>
+    <p class="subtitle" id="billsCount">0 recurring items</p>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Joint</div>
+        <div class="stat-value" id="billsJoint">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Yours</div>
+        <div class="stat-value" id="billsMe">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Chay's</div>
+        <div class="stat-value" id="billsChay">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Variable</div>
+        <div class="stat-value" id="billsVariable">£0</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="openModal('bill')" style="margin-top: 14px;">Add a bill</button>
+  </div>
+
+  <div class="card">
+    <h2>Your bills</h2>
+    <div class="item-list" id="billsList">
+      <div class="empty">No bills yet. Add the ones you pay every month so you can see what's left for saving.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-wishlist">
+  <div class="header">
+    <div class="eyebrow">Things we'd like for the day</div>
+    <h1>Wishlist</h1>
+  </div>
+
+  <div class="card">
+    <h2>Estimated wedding spend</h2>
+    <p class="subtitle">Tally of everything on your list</p>
+    <div class="big-amount"><span class="currency">£</span><span id="wishTotal">0</span></div>
+    <div class="eur-equiv" id="wishEur">≈ €0</div>
+    <div class="wish-totals">
+      <div class="stat">
+        <div class="stat-label">Must</div>
+        <div class="stat-value" id="wishMust">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Want</div>
+        <div class="stat-value" id="wishWant">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Nice</div>
+        <div class="stat-value" id="wishNice">£0</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="openModal('wish')" style="margin-top: 12px;">Add to wishlist</button>
+  </div>
+
+  <div id="budgetCompare"></div>
+
+  <div class="card">
+    <h2>Items</h2>
+    <div class="item-list" id="wishList">
+      <div class="empty">Nothing on the list yet. Add the things you both want — venue, dress, flowers, cake, anything.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-totals">
+  <div class="header">
+    <div class="eyebrow">Running totals</div>
+    <h1>All time</h1>
+  </div>
+
+  <div class="card">
+    <h2>Wedding fund</h2>
+    <p class="subtitle">Lifetime contributions</p>
+    <div class="big-amount"><span class="currency">£</span><span id="totalsFund">0</span></div>
+    <div class="eur-equiv" id="totalsFundEur">≈ €0</div>
+    <div class="stat-grid" style="margin-top: 12px;">
+      <div class="stat">
+        <div class="stat-label">Deposit</div>
+        <div class="stat-value" id="totalsDeposit">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">General fund</div>
+        <div class="stat-value" id="totalsGeneral">£0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Money flow</h2>
+    <p class="subtitle">Everything you've logged</p>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Total in</div>
+        <div class="stat-value positive" id="totalsIn">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total out</div>
+        <div class="stat-value negative" id="totalsOut">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total saved</div>
+        <div class="stat-value" id="totalsSaved">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Savings rate</div>
+        <div class="stat-value" id="totalsRate">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Spending by category</h2>
+    <p class="subtitle">Where the money goes</p>
+    <div class="item-list" id="categoryBreakdown">
+      <div class="empty">Log a few transactions to see your spending breakdown.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>By month</h2>
+    <p class="subtitle">How much you saved each month</p>
+    <div class="item-list" id="monthlyBreakdown">
+      <div class="empty">Log a few months of activity to see your trend.</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-settings">
+  <div class="header">
+    <div class="eyebrow">Configure the fund</div>
+    <h1>Settings</h1>
+  </div>
+
+  <div class="card">
+    <h2>Goals</h2>
+    <div class="field">
+      <label>Total wedding budget (GBP)</label>
+      <input type="number" id="setGoal" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Deposit amount (GBP)</label>
+      <input type="number" id="setDeposit" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Wedding date</label>
+      <input type="date" id="setDate">
+    </div>
+    <div class="field">
+      <label>Deposit due by</label>
+      <input type="date" id="setDepositDate">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Income</h2>
+    <div class="field">
+      <label>Your typical monthly salary (GBP)</label>
+      <input type="number" id="setSalary" inputmode="decimal" step="0.01">
+    </div>
+    <div class="field">
+      <label>Chay's typical monthly salary (GBP)</label>
+      <input type="number" id="setChay" inputmode="decimal" step="0.01">
+    </div>
+    <p class="small-note">Rough averages. The salary sorter uses these as a starting point — you can override the actual amounts each month, and add other income on top.</p>
+  </div>
+
+  <div class="card">
+    <h2>Exchange rate</h2>
+    <div class="field">
+      <label>GBP to EUR rate</label>
+      <input type="number" id="setRate" inputmode="decimal" step="0.0001">
+    </div>
+    <p class="small-note">Used to show EUR equivalents. Update this every so often.</p>
+  </div>
+
+  <div class="card">
+    <button class="btn btn-primary btn-full" onclick="saveSettings()">Save changes</button>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="exportData()">Export data</button>
+      <button class="btn btn-ghost" onclick="importData()">Import data</button>
+    </div>
+    <input type="file" id="importFile" accept="application/json" style="display:none">
+  </div>
+
+  <div class="card">
+    <h2>Import Monzo CSV</h2>
+    <p class="subtitle">Add transactions from a Monzo data export</p>
+    <button class="btn btn-primary btn-full" onclick="importMonzoCsv()">Choose CSV file</button>
+    <input type="file" id="monzoFile" accept=".csv,text/csv" style="display:none">
+    <p class="small-note">Skips transactions already imported (matched by description, amount, and date). All categories from Monzo are preserved.</p>
+  </div>
+
+  <div class="card">
+    <h2>Debug</h2>
+    <p class="subtitle">Version: v7 · 18 May 2026 · timezone fix · 122 default transactions</p>
+    <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
+    <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
+  </div>
+
+  <div class="card">
+    <h2>Danger zone</h2>
+    <p class="subtitle">This clears everything. There's no undo.</p>
+    <button class="btn btn-ghost btn-full" onclick="resetAll()" style="color: var(--rust); border-color: var(--rust);">Reset all data</button>
+  </div>
+</div>
+
+<button class="fab" id="addBtn" onclick="openModal('tx')">+</button>
+
+<div class="modal" id="modalBatch">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('batch')">×</button>
+    <h2>Batch add</h2>
+    <p class="subtitle">Log several transactions in one go. Tap + to add a row.</p>
+
+    <div class="field">
+      <label>Date for all</label>
+      <input type="date" id="batchDate">
+    </div>
+
+    <div id="batchRows"></div>
+
+    <button class="btn btn-ghost btn-full" onclick="addBatchRow()" style="margin-top: 10px;">+ Add another row</button>
+
+    <button class="btn btn-primary btn-full" onclick="saveBatch()" style="margin-top: 14px;">Save all</button>
+  </div>
+</div>
+
+<div class="modal" id="modalTx">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('tx')">×</button>
+    <h2>New entry</h2>
+
+    <div class="field">
+      <label>Type</label>
+      <div class="seg" id="txTypeSeg">
+        <button class="active" data-type="in">In</button>
+        <button data-type="out">Out</button>
+        <button data-type="save">To fund</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Amount (GBP)</label>
+      <input type="number" id="txAmount" inputmode="decimal" placeholder="0.00" step="0.01">
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <input type="text" id="txDesc" placeholder="e.g. Salary, Tesco shop, ISA transfer">
+    </div>
+
+    <div class="field" id="txDepositField" style="display:none">
+      <label>Counts towards deposit?</label>
+      <div class="seg" id="txDepositSeg">
+        <button class="active" data-deposit="0">General fund</button>
+        <button data-deposit="1">Deposit</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="txDate">
+    </div>
+
+    <div class="field">
+      <label>Category (optional)</label>
+      <select id="txCategory">
+        <option value="">— None —</option>
+        <option value="Groceries">Groceries</option>
+        <option value="Eating out">Eating out</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Transport">Transport</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Holidays">Holidays</option>
+        <option value="Bills">Bills</option>
+        <option value="Income">Income</option>
+        <option value="Transfers">Transfers</option>
+        <option value="Savings">Savings</option>
+        <option value="General">General</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="saveTx()">Save entry</button>
+  </div>
+</div>
+
+<div class="modal" id="modalBill">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('bill')">×</button>
+    <h2>New bill</h2>
+
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="billName" placeholder="e.g. Council tax, Netflix, Phone">
+    </div>
+
+    <div class="field">
+      <label>Amount per month (GBP)</label>
+      <input type="number" id="billAmount" inputmode="decimal" placeholder="0.00" step="0.01">
+    </div>
+
+    <div class="field">
+      <label>Same every month?</label>
+      <div class="seg" id="billFixedSeg">
+        <button class="active" data-fixed="1">Fixed amount</button>
+        <button data-fixed="0">Varies</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Day of the month it goes out</label>
+      <input type="number" id="billDay" inputmode="numeric" placeholder="e.g. 1, 15, 28" min="1" max="31">
+    </div>
+
+    <div class="field">
+      <label>Which account</label>
+      <div class="seg" id="billAccountSeg">
+        <button class="active" data-account="joint">Joint</button>
+        <button data-account="me">Yours</button>
+        <button data-account="chay">Chay's</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <select id="billCat">
+        <option value="housing">Housing</option>
+        <option value="utilities">Utilities</option>
+        <option value="subscription">Subscription</option>
+        <option value="transport">Transport</option>
+        <option value="insurance">Insurance</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="saveBill()">Save bill</button>
+  </div>
+</div>
+
+<div class="modal" id="modalWish">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('wish')">×</button>
+    <h2>New wishlist item</h2>
+
+    <div class="field">
+      <label>What is it?</label>
+      <input type="text" id="wishName" placeholder="e.g. Venue, dress, photographer, flowers">
+    </div>
+
+    <div class="field">
+      <label>Estimated cost (GBP)</label>
+      <input type="number" id="wishAmount" inputmode="decimal" placeholder="0.00" step="0.01">
+    </div>
+
+    <div class="field">
+      <label>Priority</label>
+      <div class="seg" id="wishPrioritySeg">
+        <button class="active" data-priority="must">Must have</button>
+        <button data-priority="want">Want</button>
+        <button data-priority="nice">Nice</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Notes (optional)</label>
+      <textarea id="wishNotes" rows="2" placeholder="Any details, links, ideas"></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="saveWish()">Save item</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'wedding-fund-jess-v2';
+
+const defaultState = {
+  goal: 30000,
+  deposit: 6000,
+  weddingDate: '2028-04-01',
+  depositDate: '2026-08-01',
+  eurRate: 1.17,
+  typicalSalary: 0,
+  typicalChay: 0,
+  transactions: [
+    {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777507200005, "type": "out", "amount": 17.61, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200006, "type": "out", "amount": 0.39, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200007, "type": "out", "amount": 30.37, "desc": "D R Luckhurst Butchers", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200008, "type": "out", "amount": 0.63, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200009, "type": "out", "amount": 10.97, "desc": "Aldi", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200010, "type": "out", "amount": 0.03, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200011, "type": "out", "amount": 4.24, "desc": "Hazells Convenience St", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200012, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200013, "type": "out", "amount": 16.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200014, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200015, "type": "out", "amount": 12.0, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200016, "type": "out", "amount": 15.39, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200017, "type": "out", "amount": 0.61, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200018, "type": "out", "amount": 8.49, "desc": "Amazon", "date": "2026-04-30", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777507200019, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777507200020, "type": "out", "amount": 3.87, "desc": "Milk & More", "date": "2026-04-30", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777507200021, "type": "out", "amount": 0.13, "desc": "Christmas Savings  Pot", "date": "2026-04-30", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600023, "type": "out", "amount": 100.0, "desc": "65 CHURCH RD TENANTS ASSOC", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 8},
+    {"id": 1777593600025, "type": "out", "amount": 1223.07, "desc": "Halifax", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 1},
+    {"id": 1777593600027, "type": "out", "amount": 173.0, "desc": "Hbc Council Tax", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 2},
+    {"id": 1777593600029, "type": "out", "amount": 100.0, "desc": "Southern Water", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 4},
+    {"id": 1777593600030, "type": "out", "amount": 10.0, "desc": "Novuna Personal Finance", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 5},
+    {"id": 1777593600032, "type": "out", "amount": 153.73, "desc": "Octopus Energy", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 6},
+    {"id": 1777593600033, "type": "out", "amount": 12.65, "desc": "Murco Costcutter", "date": "2026-05-01", "deposit": 0, "category": "Transport", "billId": null},
+    {"id": 1777593600034, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600035, "type": "out", "amount": 120.0, "desc": "Shirley Lewis", "date": "2026-05-01", "deposit": 0, "category": "Bills", "billId": 7},
+    {"id": 1777593600036, "type": "out", "amount": 4.96, "desc": "Western Road Store Con", "date": "2026-05-01", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777593600037, "type": "out", "amount": 0.04, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600038, "type": "out", "amount": 4.95, "desc": "Jempsons Supermarkets", "date": "2026-05-01", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777593600039, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777593600040, "type": "out", "amount": 42.9, "desc": "Taj Mahkhal", "date": "2026-05-01", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777593600041, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-01", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000042, "type": "in", "amount": 1400.0, "desc": "Antony White", "date": "2026-05-02", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1777680000043, "type": "out", "amount": 14.7, "desc": "Poppyseed Bakery 3", "date": "2026-05-02", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777680000044, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000045, "type": "out", "amount": 7.99, "desc": "The Rest Is History", "date": "2026-05-02", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777680000046, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777680000047, "type": "out", "amount": 19.99, "desc": "Amazon", "date": "2026-05-02", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777680000048, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-02", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777766400049, "type": "out", "amount": 29.0, "desc": "Balfour And By", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400050, "type": "out", "amount": 8.0, "desc": "Hastings Tradi", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400051, "type": "out", "amount": 65.0, "desc": "Leigh Gallery", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400052, "type": "out", "amount": 6.9, "desc": "Grace & Favour", "date": "2026-05-03", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1777766400053, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777766400054, "type": "out", "amount": 80.52, "desc": "The New Inn", "date": "2026-05-03", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777766400055, "type": "out", "amount": 0.48, "desc": "Christmas Savings  Pot", "date": "2026-05-03", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777852800056, "type": "out", "amount": 13.0, "desc": "Da Romeo", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800057, "type": "out", "amount": 18.0, "desc": "Creams", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800058, "type": "out", "amount": 4.0, "desc": "Sip & Savour", "date": "2026-05-04", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1777852800059, "type": "out", "amount": 5.99, "desc": "Disney+", "date": "2026-05-04", "deposit": 0, "category": "Bills", "billId": 10},
+    {"id": 1777852800060, "type": "out", "amount": 0.01, "desc": "Christmas Savings  Pot", "date": "2026-05-04", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777939200062, "type": "out", "amount": 828.59, "desc": "The Mortgage Works", "date": "2026-05-05", "deposit": 0, "category": "Bills", "billId": 12},
+    {"id": 1777939200063, "type": "out", "amount": 69.68, "desc": "Tesco", "date": "2026-05-05", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1777939200064, "type": "out", "amount": 0.32, "desc": "Christmas Savings  Pot", "date": "2026-05-05", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1777939200065, "type": "out", "amount": 12.0, "desc": "Wickes", "date": "2026-05-05", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600066, "type": "out", "amount": 7.84, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600067, "type": "out", "amount": 0.16, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778025600068, "type": "out", "amount": 86.1, "desc": "Murco Costcutter", "date": "2026-05-06", "deposit": 0, "category": "Transport", "billId": null},
+    {"id": 1778025600069, "type": "out", "amount": 0.9, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778025600070, "type": "out", "amount": 3.2, "desc": "Amazon", "date": "2026-05-06", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778025600071, "type": "out", "amount": 0.8, "desc": "Christmas Savings  Pot", "date": "2026-05-06", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778112000072, "type": "out", "amount": 9.0, "desc": "SMARTY", "date": "2026-05-07", "deposit": 0, "category": "Bills", "billId": 13},
+    {"id": 1778112000074, "type": "out", "amount": 6.81, "desc": "Milk & More", "date": "2026-05-07", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778112000075, "type": "out", "amount": 0.19, "desc": "Christmas Savings  Pot", "date": "2026-05-07", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778198400076, "type": "out", "amount": 58.32, "desc": "Harrington's Pet Food", "date": "2026-05-08", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778198400077, "type": "out", "amount": 0.68, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778198400078, "type": "out", "amount": 32.4, "desc": "Train Pal", "date": "2026-05-08", "deposit": 0, "category": "Holidays", "billId": null},
+    {"id": 1778198400079, "type": "out", "amount": 0.6, "desc": "Christmas Savings  Pot", "date": "2026-05-08", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800080, "type": "out", "amount": 7.0, "desc": "Jerk And Bean", "date": "2026-05-09", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778284800081, "type": "out", "amount": 14.25, "desc": "The Sleeper St", "date": "2026-05-09", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778284800082, "type": "out", "amount": 0.75, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800083, "type": "out", "amount": 28.0, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778284800084, "type": "out", "amount": 97.8, "desc": "Mantel Farm Lt", "date": "2026-05-09", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1778284800085, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800086, "type": "out", "amount": 15.0, "desc": "Edward Bulmer Natural Paint", "date": "2026-05-09", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778284800087, "type": "out", "amount": 20.65, "desc": "Aldi", "date": "2026-05-09", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778284800088, "type": "out", "amount": 0.35, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778284800089, "type": "out", "amount": 3.85, "desc": "Tesco", "date": "2026-05-09", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778284800090, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-09", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778371200091, "type": "out", "amount": 2.49, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778371200092, "type": "out", "amount": 0.51, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778371200093, "type": "out", "amount": 154.88, "desc": "Amazon", "date": "2026-05-10", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778371200094, "type": "out", "amount": 0.12, "desc": "Christmas Savings  Pot", "date": "2026-05-10", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778544000095, "type": "out", "amount": 2.0, "desc": "Nayax Janet And John", "date": "2026-05-12", "deposit": 0, "category": "Entertainment", "billId": null},
+    {"id": 1778544000096, "type": "out", "amount": 3.95, "desc": "Snowdon Mountain Railway", "date": "2026-05-12", "deposit": 0, "category": "Entertainment", "billId": null},
+    {"id": 1778544000097, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778544000098, "type": "out", "amount": 5.5, "desc": "Amazon", "date": "2026-05-12", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778544000099, "type": "out", "amount": 0.5, "desc": "Christmas Savings  Pot", "date": "2026-05-12", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778630400100, "type": "out", "amount": 5.18, "desc": "McDonald\u2019s", "date": "2026-05-13", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778630400101, "type": "out", "amount": 0.82, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778630400103, "type": "out", "amount": 3.8, "desc": "Hazells Convenience St", "date": "2026-05-13", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778630400104, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-13", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800105, "type": "out", "amount": 31.77, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800106, "type": "out", "amount": 0.23, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800107, "type": "out", "amount": 3.85, "desc": "Cured Delicatessen", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800108, "type": "out", "amount": 0.15, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778716800110, "type": "out", "amount": 9.75, "desc": "Milk & More", "date": "2026-05-14", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778716800111, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-14", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778803200112, "type": "out", "amount": 35.75, "desc": "24|7 Home Rescue", "date": "2026-05-15", "deposit": 0, "category": "Bills", "billId": 17},
+    {"id": 1778803200113, "type": "out", "amount": 26.0, "desc": "Lightningfibre", "date": "2026-05-15", "deposit": 0, "category": "Bills", "billId": 16},
+    {"id": 1778803200115, "type": "out", "amount": 3.95, "desc": "Hazells Convenience St", "date": "2026-05-15", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778803200116, "type": "out", "amount": 0.05, "desc": "Christmas Savings  Pot", "date": "2026-05-15", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600117, "type": "out", "amount": 4.7, "desc": "Tesco", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600118, "type": "out", "amount": 0.3, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600119, "type": "out", "amount": 71.58, "desc": "Cheese & Delicatessen", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600120, "type": "out", "amount": 0.42, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778889600121, "type": "in", "amount": 23.86, "desc": "W Baxter", "date": "2026-05-16", "deposit": 0, "category": "Income", "billId": null},
+    {"id": 1778889600122, "type": "out", "amount": 27.24, "desc": "Aldi", "date": "2026-05-16", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778889600123, "type": "out", "amount": 0.76, "desc": "Christmas Savings  Pot", "date": "2026-05-16", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000127, "type": "out", "amount": 10.8, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778976000128, "type": "out", "amount": 0.2, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000129, "type": "out", "amount": 9.9, "desc": "The Jolly Fisherman", "date": "2026-05-17", "deposit": 0, "category": "Eating out", "billId": null},
+    {"id": 1778976000130, "type": "out", "amount": 0.1, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000131, "type": "out", "amount": 10.14, "desc": "Hazells Convenience St", "date": "2026-05-17", "deposit": 0, "category": "Groceries", "billId": null},
+    {"id": 1778976000132, "type": "out", "amount": 0.86, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1778976000133, "type": "out", "amount": 1.75, "desc": "Amazon", "date": "2026-05-17", "deposit": 0, "category": "Shopping", "billId": null},
+    {"id": 1778976000134, "type": "out", "amount": 0.25, "desc": "Christmas Savings  Pot", "date": "2026-05-17", "deposit": 0, "category": "Savings", "billId": null},
+    {"id": 1779062400135, "type": "out", "amount": 27.67, "desc": "O2", "date": "2026-05-18", "deposit": 0, "category": "Bills", "billId": 18},
+    {"id": 1779062400137, "type": "out", "amount": 8.55, "desc": "J Andersen Limited", "date": "2026-05-18", "deposit": 0, "category": "General", "billId": null},
+    {"id": 1779062400138, "type": "out", "amount": 0.45, "desc": "Christmas Savings  Pot", "date": "2026-05-18", "deposit": 0, "category": "Savings", "billId": null}
+  ],
+  bills: [
+    {"id": 1, "name": "Halifax (home mortgage)", "amount": 1223.07, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 2, "name": "Hbc Council Tax", "amount": 173.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 3, "name": "Aviva", "amount": 24.98, "fixed": 1, "account": "joint", "day": 1, "paidMonths": []},
+    {"id": 4, "name": "Southern Water", "amount": 100.0, "fixed": 0, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 5, "name": "Novuna Personal Finance", "amount": 10.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 6, "name": "Octopus Energy", "amount": 153.73, "fixed": 0, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 7, "name": "Shirley Lewis", "amount": 120.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 8, "name": "65 Church Rd Tenants Assoc", "amount": 100.0, "fixed": 1, "account": "joint", "day": 1, "paidMonths": ["2026-05"]},
+    {"id": 9, "name": "Amazon Prime", "amount": 8.99, "fixed": 1, "account": "joint", "day": 3, "paidMonths": []},
+    {"id": 10, "name": "Disney+", "amount": 5.99, "fixed": 1, "account": "joint", "day": 4, "paidMonths": ["2026-05"]},
+    {"id": 11, "name": "Apple", "amount": 2.99, "fixed": 1, "account": "joint", "day": 5, "paidMonths": []},
+    {"id": 12, "name": "The Mortgage Works (flat)", "amount": 828.59, "fixed": 1, "account": "joint", "day": 5, "paidMonths": ["2026-05"]},
+    {"id": 13, "name": "SMARTY", "amount": 9.0, "fixed": 1, "account": "joint", "day": 7, "paidMonths": ["2026-05"]},
+    {"id": 14, "name": "Google Storage", "amount": 1.59, "fixed": 1, "account": "joint", "day": 10, "paidMonths": []},
+    {"id": 15, "name": "Apple (extra)", "amount": 0.99, "fixed": 1, "account": "joint", "day": 13, "paidMonths": []},
+    {"id": 16, "name": "Lightningfibre", "amount": 26.0, "fixed": 1, "account": "joint", "day": 15, "paidMonths": ["2026-05"]},
+    {"id": 17, "name": "24/7 Home Rescue", "amount": 35.75, "fixed": 1, "account": "joint", "day": 15, "paidMonths": ["2026-05"]},
+    {"id": 18, "name": "O2", "amount": 27.67, "fixed": 1, "account": "joint", "day": 18, "paidMonths": ["2026-05"]}
+  ],
+  wishlist: [],
+  sorterDraft: { me: 0, chay: 0, other: 0, otherNote: '', month: '' }
+};
+
+let state = load();
+let currentFilter = 'all';
+let currentTxType = 'in';
+let currentTxDeposit = 0;
+let currentWishPriority = 'must';
+let currentBillFixed = 1;
+let currentBillAccount = 'joint';
+
+function load() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const merged = { ...defaultState, ...parsed };
+      // Ensure bills have paidMonths array (migration for older saves)
+      if (merged.bills) {
+        merged.bills.forEach(b => { if (!b.paidMonths) b.paidMonths = []; });
+      }
+      // Ensure transactions have billId field for consistency
+      if (merged.transactions) {
+        merged.transactions.forEach(t => { if (t.billId === undefined) t.billId = null; });
+      }
+      return merged;
+    }
+    const v1 = localStorage.getItem('wedding-fund-jess-v1');
+    if (v1) {
+      const old = JSON.parse(v1);
+      const migrated = { ...defaultState };
+      if (old.goal) migrated.goal = old.goal;
+      if (old.deposit) migrated.deposit = old.deposit;
+      if (old.weddingDate) migrated.weddingDate = old.weddingDate;
+      if (old.depositDate) migrated.depositDate = old.depositDate;
+      if (old.eurRate) migrated.eurRate = old.eurRate;
+      if (old.transactions && old.transactions.length) {
+        migrated.transactions = old.transactions.map(t => ({ ...t, billId: t.billId || null }));
+      }
+      if (old.bills && old.bills.length) {
+        migrated.bills = old.bills.map(b => ({ ...b, paidMonths: b.paidMonths || [] }));
+      }
+      return migrated;
+    }
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(defaultState));
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function fmt(n) {
+  return Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtWhole(n) {
+  return Math.round(n).toLocaleString('en-GB');
+}
+
+function fmtMoney(n, c = '£') {
+  return c + fmt(n);
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Get the last working day (Mon-Fri) of a given month
+function lastWorkingDay(year, month) {
+  // month is 0-indexed for Date constructor
+  let d = new Date(year, month + 1, 0); // last day of month
+  while (d.getDay() === 0 || d.getDay() === 6) {
+    d.setDate(d.getDate() - 1);
+  }
+  return d;
+}
+
+// Returns the pay-cycle key (YYYY-MM) for any date.
+// Pay cycle = period between last working days. e.g. 30 Apr (Thu, payday) -> May cycle
+// because payday marks the START of a new cycle.
+function payCycleFor(date) {
+  const lwd = lastWorkingDay(date.getFullYear(), date.getMonth());
+  // Zero out times so date comparison is by day only
+  const dDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (dDay >= lwd) {
+    // On or after payday -> next month's cycle
+    // Build the next month's key directly to avoid timezone shifts from toISOString
+    let nextY = date.getFullYear();
+    let nextM = date.getMonth() + 2; // +2 because getMonth is 0-indexed, we want 1-indexed next month
+    if (nextM > 12) { nextY++; nextM -= 12; }
+    return `${nextY}-${String(nextM).padStart(2, '0')}`;
+  }
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Returns the pay-cycle key for a date string (YYYY-MM-DD)
+function payCycleForStr(dateStr) {
+  return payCycleFor(new Date(dateStr + 'T12:00:00'));
+}
+
+// Current pay cycle (replaces getSalaryMonth)
+function getSalaryMonth() {
+  return payCycleFor(new Date());
+}
+
+// Get start and end Date of a given pay cycle
+function payCycleBounds(cycleKey) {
+  // cycleKey like '2026-05' means: from last working day of April → day before last working day of May
+  const [year, month] = cycleKey.split('-').map(Number);
+  // month is 1-indexed in key. JS Date wants 0-indexed.
+  const startLwd = lastWorkingDay(year, month - 2); // previous month's lwd
+  const endLwd = lastWorkingDay(year, month - 1);   // this month's lwd (exclusive)
+  return { start: startLwd, end: endLwd };
+}
+
+function switchView(name) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.view === name);
+  });
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.toggle('active', v.id === 'view-' + name);
+  });
+  window.scrollTo(0, 0);
+  const fab = document.getElementById('addBtn');
+  fab.style.display = (name === 'settings' || name === 'bills' || name === 'wishlist' || name === 'totals') ? 'none' : 'flex';
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => switchView(t.dataset.view));
+});
+
+function openModal(type) {
+  if (type === 'tx') {
+    document.getElementById('txAmount').value = '';
+    document.getElementById('txDesc').value = '';
+    document.getElementById('txDate').value = todayStr();
+    document.getElementById('txCategory').value = '';
+    currentTxType = 'in';
+    currentTxDeposit = 0;
+    updateTxSeg();
+    updateTxDepositVisibility();
+    document.getElementById('modalTx').classList.add('open');
+  } else if (type === 'bill') {
+    document.getElementById('billName').value = '';
+    document.getElementById('billAmount').value = '';
+    document.getElementById('billDay').value = '';
+    currentBillFixed = 1;
+    currentBillAccount = 'joint';
+    updateBillSegs();
+    document.getElementById('modalBill').classList.add('open');
+  } else if (type === 'wish') {
+    document.getElementById('wishName').value = '';
+    document.getElementById('wishAmount').value = '';
+    document.getElementById('wishNotes').value = '';
+    currentWishPriority = 'must';
+    updateWishSeg();
+    document.getElementById('modalWish').classList.add('open');
+  } else if (type === 'batch') {
+    document.getElementById('batchDate').value = todayStr();
+    document.getElementById('batchRows').innerHTML = '';
+    addBatchRow();
+    addBatchRow();
+    addBatchRow();
+    document.getElementById('modalBatch').classList.add('open');
+  }
+}
+
+function closeModal(type) {
+  const map = { tx: 'modalTx', bill: 'modalBill', wish: 'modalWish', batch: 'modalBatch' };
+  document.getElementById(map[type]).classList.remove('open');
+}
+
+function updateTxSeg() {
+  document.querySelectorAll('#txTypeSeg button').forEach(b => {
+    b.classList.toggle('active', b.dataset.type === currentTxType);
+  });
+}
+
+function updateTxDepositVisibility() {
+  document.getElementById('txDepositField').style.display = currentTxType === 'save' ? 'block' : 'none';
+}
+
+document.querySelectorAll('#txTypeSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentTxType = b.dataset.type;
+    updateTxSeg();
+    updateTxDepositVisibility();
+  });
+});
+
+document.querySelectorAll('#txDepositSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentTxDeposit = parseInt(b.dataset.deposit);
+    document.querySelectorAll('#txDepositSeg button').forEach(x => {
+      x.classList.toggle('active', parseInt(x.dataset.deposit) === currentTxDeposit);
+    });
+  });
+});
+
+function updateWishSeg() {
+  document.querySelectorAll('#wishPrioritySeg button').forEach(b => {
+    b.classList.toggle('active', b.dataset.priority === currentWishPriority);
+  });
+}
+
+document.querySelectorAll('#wishPrioritySeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentWishPriority = b.dataset.priority;
+    updateWishSeg();
+  });
+});
+
+function updateBillSegs() {
+  document.querySelectorAll('#billFixedSeg button').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.fixed) === currentBillFixed);
+  });
+  document.querySelectorAll('#billAccountSeg button').forEach(b => {
+    b.classList.toggle('active', b.dataset.account === currentBillAccount);
+  });
+}
+
+document.querySelectorAll('#billFixedSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentBillFixed = parseInt(b.dataset.fixed);
+    updateBillSegs();
+  });
+});
+
+document.querySelectorAll('#billAccountSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentBillAccount = b.dataset.account;
+    updateBillSegs();
+  });
+});
+
+document.querySelectorAll('#filterSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    currentFilter = b.dataset.filter;
+    document.querySelectorAll('#filterSeg button').forEach(x => {
+      x.classList.toggle('active', x.dataset.filter === currentFilter);
+    });
+    renderMoney();
+  });
+});
+
+function addBatchRow() {
+  const container = document.getElementById('batchRows');
+  const rowId = 'batch-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+  const row = document.createElement('div');
+  row.className = 'batch-row';
+  row.id = rowId;
+  row.innerHTML = `
+    <select class="batch-type">
+      <option value="out">Out</option>
+      <option value="in">In</option>
+      <option value="save">Save</option>
+    </select>
+    <input type="text" class="batch-desc" placeholder="What for?">
+    <input type="number" class="batch-amount" inputmode="decimal" placeholder="0.00" step="0.01">
+    <button class="row-del" onclick="document.getElementById('${rowId}').remove()">×</button>
+  `;
+  container.appendChild(row);
+}
+
+function saveBatch() {
+  const date = document.getElementById('batchDate').value;
+  if (!date) { alert('Pick a date'); return; }
+
+  const rows = document.querySelectorAll('#batchRows .batch-row');
+  const entries = [];
+  let skipped = 0;
+
+  rows.forEach(row => {
+    const type = row.querySelector('.batch-type').value;
+    const desc = row.querySelector('.batch-desc').value.trim();
+    const amount = parseFloat(row.querySelector('.batch-amount').value);
+
+    if (!desc || !amount || amount <= 0) {
+      skipped++;
+      return;
+    }
+
+    entries.push({
+      id: Date.now() + Math.floor(Math.random() * 10000),
+      type,
+      amount,
+      desc,
+      date,
+      deposit: 0
+    });
+  });
+
+  if (entries.length === 0) {
+    alert('No valid rows to save. Make sure each row has a description and amount.');
+    return;
+  }
+
+  state.transactions.push(...entries);
+  save();
+  closeModal('batch');
+  renderAll();
+  alert(`Saved ${entries.length} ${entries.length === 1 ? 'transaction' : 'transactions'}${skipped > 0 ? ` (${skipped} blank rows skipped)` : ''}.`);
+}
+
+function saveTx() {
+  const amount = parseFloat(document.getElementById('txAmount').value);
+  const desc = document.getElementById('txDesc').value.trim();
+  const date = document.getElementById('txDate').value;
+  const category = document.getElementById('txCategory').value;
+
+  if (!amount || amount <= 0) { alert('Enter an amount'); return; }
+  if (!desc) { alert('Add a description'); return; }
+  if (!date) { alert('Pick a date'); return; }
+
+  state.transactions.push({
+    id: Date.now(),
+    type: currentTxType,
+    amount,
+    desc,
+    date,
+    deposit: currentTxType === 'save' ? currentTxDeposit : 0,
+    category
+  });
+
+  save();
+  closeModal('tx');
+  renderAll();
+}
+
+function saveBill() {
+  const name = document.getElementById('billName').value.trim();
+  const amount = parseFloat(document.getElementById('billAmount').value);
+  const cat = document.getElementById('billCat').value;
+  const day = parseInt(document.getElementById('billDay').value);
+
+  if (!name) { alert('Add a name'); return; }
+  if (!amount || amount <= 0) { alert('Enter an amount'); return; }
+  if (!day || day < 1 || day > 31) { alert('Enter a day between 1 and 31'); return; }
+
+  state.bills.push({
+    id: Date.now(),
+    name,
+    amount,
+    cat,
+    day,
+    fixed: currentBillFixed,
+    account: currentBillAccount
+  });
+  save();
+  closeModal('bill');
+  renderAll();
+}
+
+function saveWish() {
+  const name = document.getElementById('wishName').value.trim();
+  const amount = parseFloat(document.getElementById('wishAmount').value) || 0;
+  const notes = document.getElementById('wishNotes').value.trim();
+
+  if (!name) { alert('Add a name'); return; }
+
+  state.wishlist.push({
+    id: Date.now(),
+    name,
+    amount,
+    priority: currentWishPriority,
+    notes
+  });
+
+  save();
+  closeModal('wish');
+  renderAll();
+}
+
+function updateQuickBudget() {
+  const g = parseFloat(document.getElementById('quickGoal').value);
+  const d = parseFloat(document.getElementById('quickDeposit').value);
+  if (g > 0) state.goal = g;
+  if (d > 0) state.deposit = d;
+  save();
+  renderAll();
+  renderSettings();
+}
+
+function deleteTx(id) {
+  if (!confirm('Delete this entry?')) return;
+  state.transactions = state.transactions.filter(t => t.id !== id);
+  save();
+  renderAll();
+}
+
+function deleteBill(id) {
+  if (!confirm('Delete this bill?')) return;
+  state.bills = state.bills.filter(b => b.id !== id);
+  save();
+  renderAll();
+}
+
+function deleteWish(id) {
+  if (!confirm('Delete this item?')) return;
+  state.wishlist = state.wishlist.filter(w => w.id !== id);
+  save();
+  renderAll();
+}
+
+function getTotals() {
+  let saved = 0, depositSaved = 0;
+  let monthIn = 0, monthOut = 0, monthSaved = 0;
+  const thisCycle = getSalaryMonth();
+
+  state.transactions.forEach(t => {
+    const isThisMonth = payCycleForStr(t.date) === thisCycle;
+    if (t.type === 'save') {
+      saved += t.amount;
+      if (t.deposit) depositSaved += t.amount;
+      if (isThisMonth) monthSaved += t.amount;
+    } else if (t.type === 'in' && isThisMonth) {
+      monthIn += t.amount;
+    } else if (t.type === 'out' && isThisMonth) {
+      monthOut += t.amount;
+    }
+  });
+
+  return { saved, depositSaved, monthIn, monthOut, monthSaved };
+}
+
+function getWishTotals() {
+  let must = 0, want = 0, nice = 0;
+  state.wishlist.forEach(w => {
+    if (w.priority === 'must') must += w.amount;
+    else if (w.priority === 'want') want += w.amount;
+    else nice += w.amount;
+  });
+  return { must, want, nice, total: must + want + nice };
+}
+
+function getDaysUntil(dateStr) {
+  if (!dateStr) return null;
+  const target = new Date(dateStr);
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  target.setHours(0,0,0,0);
+  return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+}
+
+function getMonthsUntil(dateStr) {
+  if (!dateStr) return null;
+  const target = new Date(dateStr);
+  const now = new Date();
+  const months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+  return Math.max(months, 0);
+}
+
+function renderHome() {
+  const { saved, depositSaved, monthIn, monthOut, monthSaved } = getTotals();
+  const depCirc = 2 * Math.PI * 50;
+
+  const depPct = state.deposit > 0 ? Math.min(100, (depositSaved / state.deposit) * 100) : 0;
+  document.getElementById('depositRing').style.strokeDashoffset = depCirc - (depCirc * depPct / 100);
+  document.getElementById('depositPct').textContent = Math.round(depPct) + '%';
+  document.getElementById('depositSaved').textContent = fmtMoney(depositSaved);
+  document.getElementById('depositGoal').textContent = fmtMoney(state.deposit);
+  document.getElementById('depositRemaining').textContent = fmtMoney(Math.max(0, state.deposit - depositSaved));
+  if (document.activeElement.id !== 'quickDeposit') {
+    document.getElementById('quickDeposit').value = state.deposit;
+  }
+
+  const wedPct = state.goal > 0 ? Math.min(100, (saved / state.goal) * 100) : 0;
+  document.getElementById('weddingRing').style.strokeDashoffset = depCirc - (depCirc * wedPct / 100);
+  document.getElementById('weddingPct').textContent = Math.round(wedPct) + '%';
+  document.getElementById('weddingSaved').textContent = fmtMoney(saved);
+  document.getElementById('weddingGoal').textContent = fmtMoney(state.goal);
+  document.getElementById('weddingEur').textContent = '≈ €' + fmt(state.goal * state.eurRate);
+  if (document.activeElement.id !== 'quickGoal') {
+    document.getElementById('quickGoal').value = state.goal;
+  }
+
+  const months = getMonthsUntil(state.weddingDate);
+  const remaining = Math.max(0, state.goal - saved);
+  const monthly = months > 0 ? remaining / months : remaining;
+  document.getElementById('monthlyTarget').textContent = fmtMoney(monthly);
+
+  const days = getDaysUntil(state.weddingDate);
+  document.getElementById('daysLeft').textContent = days !== null ? days : '—';
+  if (state.weddingDate) {
+    const d = new Date(state.weddingDate);
+    document.getElementById('weddingDateLabel').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  document.getElementById('monthIn').textContent = fmtMoney(monthIn);
+  document.getElementById('monthOut').textContent = fmtMoney(monthOut);
+  document.getElementById('monthSaved').textContent = fmtMoney(monthSaved);
+  const net = monthIn - monthOut - monthSaved;
+  const netEl = document.getElementById('monthNet');
+  netEl.textContent = (net < 0 ? '-£' : '£') + fmt(Math.abs(net));
+  netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
+
+  const recent = [...state.transactions].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id).slice(0, 5);
+  const recentEl = document.getElementById('recentList');
+  if (recent.length === 0) {
+    recentEl.innerHTML = '<div class="empty">No transactions yet. Tap the + button to add one.</div>';
+  } else {
+    recentEl.innerHTML = recent.map(t => txItemHTML(t)).join('');
+  }
+}
+
+function renderSorter() {
+  const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
+
+  // Check if we need to reset (new salary month)
+  const currentMonth = getSalaryMonth();
+  if (!state.sorterDraft) state.sorterDraft = { me: 0, chay: 0, other: 0, otherNote: '', month: '' };
+  if (state.sorterDraft.month !== currentMonth) {
+    // New month — reset and prefill from typicals
+    state.sorterDraft = {
+      me: state.typicalSalary || 0,
+      chay: state.typicalChay || 0,
+      other: 0,
+      otherNote: '',
+      month: currentMonth
+    };
+    save();
+  }
+
+  // Sync state to inputs unless user is actively typing in them
+  const meEl = document.getElementById('incomeMe');
+  const chayEl = document.getElementById('incomeChay');
+  const otherEl = document.getElementById('incomeOther');
+  const otherNoteEl = document.getElementById('incomeOtherNote');
+  if (document.activeElement !== meEl) meEl.value = state.sorterDraft.me || '';
+  if (document.activeElement !== chayEl) chayEl.value = state.sorterDraft.chay || '';
+  if (document.activeElement !== otherEl) otherEl.value = state.sorterDraft.other || '';
+  if (document.activeElement !== otherNoteEl) otherNoteEl.value = state.sorterDraft.otherNote || '';
+
+  const me = parseFloat(meEl.value) || 0;
+  const chay = parseFloat(chayEl.value) || 0;
+  const other = parseFloat(otherEl.value) || 0;
+  const otherNote = otherNoteEl.value;
+  const pot = me + chay + other;
+
+  // Save current values back to state
+  state.sorterDraft.me = me;
+  state.sorterDraft.chay = chay;
+  state.sorterDraft.other = other;
+  state.sorterDraft.otherNote = otherNote;
+  save();
+
+  // Wedding fund suggestion
+  const { saved } = getTotals();
+  const months = getMonthsUntil(state.weddingDate);
+  const remaining = Math.max(0, state.goal - saved);
+  const suggestedWedding = months > 0 ? remaining / months : 0;
+
+  const afterBills = Math.max(0, pot - billsTotal);
+  const toWedding = Math.min(suggestedWedding, afterBills);
+  const leftover = afterBills - toWedding;
+
+  const pct = (n) => pot > 0 ? Math.min(100, (n / pot) * 100) : 0;
+
+  document.querySelector('.sort-bills').style.width = pct(billsTotal) + '%';
+  document.querySelector('.sort-wedding').style.width = pct(toWedding) + '%';
+  document.querySelector('.sort-leftover').style.width = pct(leftover) + '%';
+
+  document.getElementById('potTotal').textContent = '£' + fmt(pot);
+  document.getElementById('sortBills').textContent = '£' + fmt(billsTotal);
+  document.getElementById('sortWedding').textContent = '£' + fmt(toWedding);
+  document.getElementById('sortLeftover').textContent = '£' + fmt(leftover);
+
+  // Daily allowance
+  const dailyEl = document.getElementById('dailyAllowance');
+  if (leftover > 0) {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const today = now.getDate();
+    const daysLeft = Math.max(1, lastDay - today + 1);
+    const perDay = leftover / daysLeft;
+    dailyEl.className = 'daily-allowance show';
+    dailyEl.innerHTML = `
+      <div class="daily-allowance-label">Daily spend allowance</div>
+      <div class="daily-allowance-amount">£${fmt(perDay)}/day</div>
+      <div class="daily-allowance-note">£${fmt(leftover)} leftover ÷ ${daysLeft} days left this month</div>
+    `;
+  } else {
+    dailyEl.className = 'daily-allowance';
+    dailyEl.innerHTML = '';
+  }
+
+  // Breakdown
+  const parts = [];
+  if (me > 0) parts.push(`You £${fmt(me)}`);
+  if (chay > 0) parts.push(`Chay £${fmt(chay)}`);
+  if (other > 0) parts.push(`Other £${fmt(other)}`);
+  document.getElementById('potBreakdown').textContent = parts.length > 0 ? parts.join(' + ') : 'Enter income above';
+
+  // Hint
+  const hint = document.getElementById('sorterHint');
+  if (pot === 0) {
+    hint.className = 'sorter-hint empty';
+    hint.textContent = '';
+  } else if (pot < billsTotal) {
+    hint.className = 'sorter-hint warn';
+    hint.textContent = `The pot is £${fmt(billsTotal - pot)} short of covering your bills.`;
+  } else if (afterBills < suggestedWedding) {
+    hint.className = 'sorter-hint warn';
+    hint.textContent = `Tight month: you'd need £${fmt(suggestedWedding)} to stay on pace but only have £${fmt(afterBills)} after bills. Catch up next month if you can.`;
+  } else {
+    hint.className = 'sorter-hint';
+    hint.textContent = `On pace: £${fmt(suggestedWedding)} to the fund keeps you on track. £${fmt(leftover)} left over after that.`;
+  }
+}
+
+function useTypicalSalary() {
+  let used = false;
+  if (state.typicalSalary > 0) {
+    document.getElementById('incomeMe').value = state.typicalSalary;
+    used = true;
+  }
+  if (state.typicalChay > 0) {
+    document.getElementById('incomeChay').value = state.typicalChay;
+    used = true;
+  }
+  if (used) {
+    renderSorter();
+  } else {
+    alert('Set typical salaries in Settings first.');
+  }
+}
+
+function logSorterSplit() {
+  const me = parseFloat(document.getElementById('incomeMe').value) || 0;
+  const chay = parseFloat(document.getElementById('incomeChay').value) || 0;
+  const other = parseFloat(document.getElementById('incomeOther').value) || 0;
+  const otherNote = document.getElementById('incomeOtherNote').value.trim();
+  const pot = me + chay + other;
+
+  if (pot <= 0) { alert('Enter at least one income amount'); return; }
+
+  const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
+  const { saved } = getTotals();
+  const months = getMonthsUntil(state.weddingDate);
+  const remaining = Math.max(0, state.goal - saved);
+  const suggestedWedding = months > 0 ? remaining / months : 0;
+  const afterBills = Math.max(0, pot - billsTotal);
+  const toWedding = Math.min(suggestedWedding, afterBills);
+
+  const date = todayStr();
+  const month = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const entries = [];
+  let idCounter = Date.now();
+
+  if (me > 0) {
+    entries.push({ id: idCounter++, type: 'in', amount: me, desc: `Your salary - ${month}`, date, deposit: 0 });
+  }
+  if (chay > 0) {
+    entries.push({ id: idCounter++, type: 'in', amount: chay, desc: `Chay's salary - ${month}`, date, deposit: 0 });
+  }
+  if (other > 0) {
+    const label = otherNote ? `${otherNote} - ${month}` : `Other income - ${month}`;
+    entries.push({ id: idCounter++, type: 'in', amount: other, desc: label, date, deposit: 0 });
+  }
+
+  if (billsTotal > 0) {
+    entries.push({ id: idCounter++, type: 'out', amount: billsTotal, desc: `Monthly bills - ${month}`, date, deposit: 0 });
+  }
+
+  if (toWedding > 0) {
+    const isDeposit = confirm(`Send £${fmt(toWedding)} to the wedding fund. Counts towards deposit?`);
+    entries.push({ id: idCounter++, type: 'save', amount: toWedding, desc: `Wedding fund - ${month}`, date, deposit: isDeposit ? 1 : 0 });
+  }
+
+  state.transactions.push(...entries);
+  state.sorterDraft = { me: 0, chay: 0, other: 0, otherNote: '', month: getSalaryMonth() };
+  save();
+
+  document.getElementById('incomeMe').value = '';
+  document.getElementById('incomeChay').value = '';
+  document.getElementById('incomeOther').value = '';
+  document.getElementById('incomeOtherNote').value = '';
+  renderAll();
+  alert(`Logged ${entries.length} entries`);
+}
+
+function txItemHTML(t) {
+  const sign = t.type === 'in' ? '+' : (t.type === 'out' ? '-' : '→');
+  const d = new Date(t.date);
+  const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const tag = t.type === 'save' ? (t.deposit ? '<span class="tag deposit">Deposit</span>' : '<span class="tag savings">Fund</span>') :
+              t.type === 'in' ? '<span class="tag income">In</span>' : '<span class="tag expense">Out</span>';
+  let cat = t.category ? ` · ${escapeHtml(t.category)}` : '';
+  if (t.billId) {
+    const bill = state.bills.find(b => b.id === t.billId);
+    if (bill) cat = ` · <span class="tag billmatch">→ ${escapeHtml(bill.name)}</span>`;
+  }
+  return `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">${escapeHtml(t.desc)}</div>
+        <div class="item-meta">${dateStr} · ${tag}${cat}</div>
+      </div>
+      <div class="item-amount ${t.type}">${sign}£${fmt(t.amount)}</div>
+      <button class="item-del" onclick="deleteTx(${t.id})">×</button>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderMoney() {
+  let items = [...state.transactions].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  if (currentFilter !== 'all') items = items.filter(t => t.type === currentFilter);
+  const el = document.getElementById('moneyList');
+  el.innerHTML = items.length === 0
+    ? '<div class="empty">No transactions in this view.</div>'
+    : items.map(t => txItemHTML(t)).join('');
+}
+
+function renderBills() {
+  const total = state.bills.reduce((s,b) => s + b.amount, 0);
+  document.getElementById('billsTotal').textContent = fmt(total);
+  document.getElementById('billsCount').textContent = state.bills.length + (state.bills.length === 1 ? ' recurring item' : ' recurring items');
+
+  const thisMonth = getSalaryMonth();
+  const totals = { joint: 0, me: 0, chay: 0, variable: 0 };
+  state.bills.forEach(b => {
+    const acc = b.account || 'joint';
+    totals[acc] = (totals[acc] || 0) + b.amount;
+    if (b.fixed === 0) totals.variable += b.amount;
+  });
+  document.getElementById('billsJoint').textContent = '£' + fmt(totals.joint);
+  document.getElementById('billsMe').textContent = '£' + fmt(totals.me);
+  document.getElementById('billsChay').textContent = '£' + fmt(totals.chay);
+  document.getElementById('billsVariable').textContent = '£' + fmt(totals.variable);
+
+  const el = document.getElementById('billsList');
+  if (state.bills.length === 0) {
+    el.innerHTML = '<div class="empty">No bills yet. Add the ones you pay every month so you can see what\'s left for saving.</div>';
+  } else {
+    const sorted = [...state.bills].sort((a, b) => (a.day || 99) - (b.day || 99));
+    el.innerHTML = sorted.map(b => {
+      const accClass = b.account || 'joint';
+      const accLabel = accClass === 'joint' ? 'Joint' : accClass === 'me' ? 'Yours' : 'Chay\'s';
+      const fixedTag = b.fixed === 0 ? '<span class="tag varies">Varies</span>' : '';
+      const dayLabel = b.day ? `Day ${b.day}` : '';
+      const paidThisMonth = b.paidMonths && b.paidMonths.includes(thisMonth);
+      const paidTag = paidThisMonth ? '<span class="tag paid">Paid</span>' : '';
+      return `
+        <div class="item ${paidThisMonth ? 'bill-paid' : ''}">
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(b.name)}</div>
+            <div class="item-meta">
+              ${dayLabel ? dayLabel + ' · ' : ''}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag} ${paidTag}
+            </div>
+          </div>
+          <div class="item-amount out">-£${fmt(b.amount)}</div>
+          <button class="item-del" onclick="deleteBill(${b.id})">×</button>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function renderWishlist() {
+  const { must, want, nice, total } = getWishTotals();
+  document.getElementById('wishTotal').textContent = fmt(total);
+  document.getElementById('wishEur').textContent = '≈ €' + fmt(total * state.eurRate);
+  document.getElementById('wishMust').textContent = fmtMoney(must);
+  document.getElementById('wishWant').textContent = fmtMoney(want);
+  document.getElementById('wishNice').textContent = fmtMoney(nice);
+
+  const compareEl = document.getElementById('budgetCompare');
+  if (total > 0) {
+    const diff = state.goal - total;
+    if (diff < 0) {
+      compareEl.innerHTML = `<div class="over-budget">Your wishlist is <strong>£${fmt(-diff)} over</strong> your £${fmt(state.goal)} budget. Time to cut some "nice to haves" or bump the budget.</div>`;
+    } else {
+      compareEl.innerHTML = `<div class="under-budget">You have <strong>£${fmt(diff)} of headroom</strong> under your £${fmt(state.goal)} budget. Room to add things if you want.</div>`;
+    }
+  } else {
+    compareEl.innerHTML = '';
+  }
+
+  const el = document.getElementById('wishList');
+  if (state.wishlist.length === 0) {
+    el.innerHTML = '<div class="empty">Nothing on the list yet. Add the things you both want — venue, dress, flowers, cake, anything.</div>';
+  } else {
+    const order = { must: 0, want: 1, nice: 2 };
+    const sorted = [...state.wishlist].sort((a,b) => order[a.priority] - order[b.priority] || b.amount - a.amount);
+    el.innerHTML = sorted.map(w => `
+      <div class="item wish-${w.priority}">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(w.name)}</div>
+          <div class="item-meta">
+            <span class="tag ${w.priority}">${w.priority === 'must' ? 'Must' : w.priority === 'want' ? 'Want' : 'Nice'}</span>${w.notes ? ' · ' + escapeHtml(w.notes) : ''}
+          </div>
+        </div>
+        <div class="item-amount wish">£${fmt(w.amount)}</div>
+        <button class="item-del" onclick="deleteWish(${w.id})">×</button>
+      </div>
+    `).join('');
+  }
+}
+
+function renderSettings() {
+  document.getElementById('setGoal').value = state.goal;
+  document.getElementById('setDeposit').value = state.deposit;
+  document.getElementById('setDate').value = state.weddingDate;
+  document.getElementById('setDepositDate').value = state.depositDate;
+  document.getElementById('setRate').value = state.eurRate;
+  document.getElementById('setSalary').value = state.typicalSalary || '';
+  document.getElementById('setChay').value = state.typicalChay || '';
+}
+
+function saveSettings() {
+  const g = parseFloat(document.getElementById('setGoal').value);
+  const d = parseFloat(document.getElementById('setDeposit').value);
+  const wd = document.getElementById('setDate').value;
+  const dd = document.getElementById('setDepositDate').value;
+  const r = parseFloat(document.getElementById('setRate').value);
+  const sal = parseFloat(document.getElementById('setSalary').value);
+  const chaySal = parseFloat(document.getElementById('setChay').value);
+
+  if (g > 0) state.goal = g;
+  if (d > 0) state.deposit = d;
+  if (wd) state.weddingDate = wd;
+  if (dd) state.depositDate = dd;
+  if (r > 0) state.eurRate = r;
+  if (sal >= 0) state.typicalSalary = sal || 0;
+  if (chaySal >= 0) state.typicalChay = chaySal || 0;
+
+  save();
+  renderAll();
+  alert('Saved');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'wedding-fund-' + todayStr() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData() {
+  document.getElementById('importFile').click();
+}
+
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (confirm('This will replace your current data. Continue?')) {
+        state = { ...defaultState, ...data };
+        save();
+        renderAll();
+        renderSettings();
+        alert('Data imported');
+      }
+    } catch (err) {
+      alert('Could not read that file');
+    }
+  };
+  reader.readAsText(file);
+});
+
+function importMonzoCsv() {
+  document.getElementById('monzoFile').click();
+}
+
+document.getElementById('monzoFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const text = ev.target.result;
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) { alert('CSV is empty.'); return; }
+
+      // Parse header
+      const header = parseCsvLine(lines[0]);
+      const idx = {
+        date: header.indexOf('Date'),
+        type: header.indexOf('Type'),
+        name: header.indexOf('Name'),
+        category: header.indexOf('Category'),
+        amount: header.indexOf('Amount'),
+        notes: header.indexOf('Notes and #tags')
+      };
+
+      if (idx.date === -1 || idx.amount === -1) {
+        alert('This doesn\'t look like a Monzo CSV. Expected columns: Date, Amount, etc.');
+        return;
+      }
+
+      // Build a set of existing transaction signatures for dedup
+      const existing = new Set();
+      state.transactions.forEach(t => {
+        existing.add(`${t.date}|${t.desc}|${t.amount}|${t.type}`);
+      });
+
+      const newTxs = [];
+      let skipped = 0;
+      let matchedToBills = 0;
+
+      // Build a lookup of bill names for fuzzy matching
+      // We'll normalise names by lowercasing and stripping non-alphanumeric
+      const normaliseForMatch = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const billLookup = state.bills.map(b => ({
+        bill: b,
+        normName: normaliseForMatch(b.name),
+        // Also pull out distinctive words from the bill name
+        words: b.name.toLowerCase().split(/\s+/).filter(w => w.length >= 4 && !['home','flat','tax','your','chay'].includes(w))
+      }));
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCsvLine(lines[i]);
+        if (cols.length < 5) continue;
+
+        const dateRaw = cols[idx.date];
+        const amount = parseFloat(cols[idx.amount]);
+        if (!dateRaw || isNaN(amount) || amount === 0) continue;
+
+        const m = dateRaw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (!m) continue;
+        const isoDate = `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+        const monthStr = payCycleForStr(isoDate);
+
+        const txType = cols[idx.type] || '';
+        const category = cols[idx.category] || '';
+        const name = (cols[idx.name] || '').trim();
+        const notes = (cols[idx.notes] || '').trim();
+
+        // Skip internal movements
+        if (txType === 'Pot transfer' && category === 'Transfers') { skipped++; continue; }
+        if (txType === 'Monzo-to-Monzo') { skipped++; continue; }
+
+        let type, txAmount, deposit = 0;
+        if (category === 'Savings') {
+          type = 'out';
+          txAmount = Math.abs(amount);
+        } else if (amount > 0) {
+          type = 'in';
+          txAmount = amount;
+        } else {
+          type = 'out';
+          txAmount = Math.abs(amount);
+        }
+
+        let desc = name || notes || category || 'Unknown';
+        desc = desc.slice(0, 60);
+
+        // Try to match to a bill if category is "Bills" or it's a recurring-payment type
+        let matchedBillId = null;
+        if (type === 'out' && (category === 'Bills' || txType === 'Direct Debit' || txType === 'Faster payment' || txType === 'Standing order')) {
+          const txNorm = normaliseForMatch(desc);
+          let bestMatch = null;
+          let bestScore = 0;
+
+          for (const entry of billLookup) {
+            let score = 0;
+
+            // Exact match on normalised name (best signal)
+            if (entry.normName === txNorm) {
+              score = 100;
+            }
+            // One contains the other (very strong signal)
+            else if (entry.normName.length >= 2 && (txNorm.includes(entry.normName) || entry.normName.includes(txNorm))) {
+              score = 80;
+            }
+            // First few chars match
+            else if (entry.normName.length >= 4 && txNorm.length >= 4 && entry.normName.slice(0, 4) === txNorm.slice(0, 4)) {
+              score = 60;
+            }
+            // Distinctive word match
+            else {
+              for (const word of entry.words) {
+                if (txNorm.includes(word)) { score = 40; break; }
+              }
+            }
+
+            // Bonus if amount matches exactly (very strong signal for fixed bills)
+            if (score > 0 && Math.abs(entry.bill.amount - txAmount) < 0.01) {
+              score += 50;
+            }
+            // Half-bonus if amount is within 10% (handles variable bills)
+            else if (score > 0 && entry.bill.amount > 0 && Math.abs(entry.bill.amount - txAmount) / entry.bill.amount < 0.3) {
+              score += 10;
+            }
+
+            if (score > bestScore) {
+              bestScore = score;
+              bestMatch = entry;
+            }
+          }
+
+          // Only accept if score is above threshold (avoid false positives on partial words)
+          if (bestMatch && bestScore >= 40) {
+            matchedBillId = bestMatch.bill.id;
+            if (!bestMatch.bill.paidMonths) bestMatch.bill.paidMonths = [];
+            if (!bestMatch.bill.paidMonths.includes(monthStr)) {
+              bestMatch.bill.paidMonths.push(monthStr);
+              matchedToBills++;
+            }
+          }
+        }
+
+        const sig = `${isoDate}|${desc}|${txAmount}|${type}`;
+        if (existing.has(sig)) {
+          skipped++;
+          continue;
+        }
+        existing.add(sig);
+
+        newTxs.push({
+          id: Date.now() + i,
+          type,
+          amount: Math.round(txAmount * 100) / 100,
+          desc,
+          date: isoDate,
+          deposit,
+          category,
+          billId: matchedBillId
+        });
+      }
+
+      if (newTxs.length === 0 && matchedToBills === 0) {
+        alert(`No new transactions to import. ${skipped} already in your data.`);
+        return;
+      }
+
+      const msgParts = [];
+      if (newTxs.length > 0) msgParts.push(`${newTxs.length} new transactions`);
+      if (matchedToBills > 0) msgParts.push(`${matchedToBills} bills matched & marked paid`);
+      if (skipped > 0) msgParts.push(`${skipped} duplicates skipped`);
+
+      if (confirm(`Import: ${msgParts.join(', ')}?`)) {
+        state.transactions.push(...newTxs);
+        save();
+        renderAll();
+        alert(`Done. ${msgParts.join(', ')}.`);
+      }
+    } catch (err) {
+      alert('Could not parse that file: ' + err.message);
+    }
+    e.target.value = ''; // reset so user can re-import the same file
+  };
+  reader.readAsText(file);
+});
+
+function parseCsvLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+function showDebug() {
+  const el = document.getElementById('debugOutput');
+  el.style.display = 'block';
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const txCount = state.transactions ? state.transactions.length : 0;
+  const billCount = state.bills ? state.bills.length : 0;
+
+  const cycle = getSalaryMonth();
+  const totals = getTotals();
+  const ins = state.transactions.filter(t => t.type === 'in');
+  const inThisCycle = ins.filter(t => payCycleForStr(t.date) === cycle);
+
+  let inDebug = ins.map(t =>
+    `  ${t.date}: ${t.desc.slice(0,20).padEnd(20)} £${t.amount.toFixed(2)} -> cycle ${payCycleForStr(t.date)}`
+  ).join('\n');
+
+  // Try each render and report errors
+  const errors = [];
+  try { renderHome(); } catch(e) { errors.push('renderHome: ' + e.message); }
+  try { renderMoney(); } catch(e) { errors.push('renderMoney: ' + e.message); }
+  try { renderBills(); } catch(e) { errors.push('renderBills: ' + e.message); }
+  try { renderWishlist(); } catch(e) { errors.push('renderWishlist: ' + e.message); }
+  try { renderSorter(); } catch(e) { errors.push('renderSorter: ' + e.message); }
+  try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
+  try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
+
+  el.textContent = `VERSION: v7
+Today: ${new Date().toISOString().slice(0,10)}
+Current pay cycle: ${cycle}
+
+Transactions in state: ${txCount}
+Bills in state: ${billCount}
+
+ALL 'in' transactions:
+${inDebug || '  (none)'}
+
+'In' assigned to THIS cycle (${cycle}): ${inThisCycle.length}
+Expected monthIn: £${inThisCycle.reduce((s,t)=>s+t.amount, 0).toFixed(2)}
+Actual monthIn from getTotals: £${totals.monthIn.toFixed(2)}
+Actual monthOut: £${totals.monthOut.toFixed(2)}
+
+Render errors:
+${errors.length > 0 ? errors.join('\n') : '(none)'}
+
+Raw localStorage length: ${raw ? raw.length : 0} chars
+Storage key: ${STORAGE_KEY}`;
+}
+
+function resetAll() {
+  if (!confirm('This deletes everything. Are you sure?')) return;
+  if (!confirm('Really sure? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('wedding-fund-jess-v1');
+  // Deep clone the default state so we get a fresh copy of bills
+  state = JSON.parse(JSON.stringify(defaultState));
+  save();
+  renderAll();
+  renderSettings();
+}
+
+function renderUpcoming() {
+  const card = document.getElementById('upcomingBillsCard');
+  const list = document.getElementById('upcomingList');
+  const subtitle = document.getElementById('upcomingSubtitle');
+
+  if (state.bills.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const now = new Date();
+  const today = now.getDate();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const thisMonth = getSalaryMonth();
+
+  // For each bill, work out days until it goes out (this month or next)
+  const billsWithDays = state.bills
+    .filter(b => !(b.paidMonths && b.paidMonths.includes(thisMonth))) // hide if already paid this month
+    .map(b => {
+    const day = b.day || 1;
+    const effectiveDay = Math.min(day, lastDay); // Handle e.g. day 31 in February
+    let daysUntil;
+    if (effectiveDay >= today) {
+      daysUntil = effectiveDay - today;
+    } else {
+      // Already passed this month — show as next month
+      const nextMonthLast = new Date(now.getFullYear(), now.getMonth() + 2, 0).getDate();
+      const nextEffective = Math.min(day, nextMonthLast);
+      daysUntil = (lastDay - today) + nextEffective;
+    }
+    return { ...b, daysUntil, effectiveDay };
+  });
+
+  // Show next 7 days of upcoming
+  const upcoming = billsWithDays
+    .filter(b => b.daysUntil <= 14)
+    .sort((a, b) => a.daysUntil - b.daysUntil);
+
+  if (upcoming.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+
+  // Group by today / this week / next 2 weeks
+  const todayBills = upcoming.filter(b => b.daysUntil === 0);
+  const soonBills = upcoming.filter(b => b.daysUntil > 0 && b.daysUntil <= 7);
+  const laterBills = upcoming.filter(b => b.daysUntil > 7);
+
+  const todayTotal = todayBills.reduce((s, b) => s + b.amount, 0);
+  const soonTotal = soonBills.reduce((s, b) => s + b.amount, 0);
+
+  if (todayBills.length > 0) {
+    subtitle.textContent = `£${fmt(todayTotal)} out today · £${fmt(soonTotal)} this week`;
+  } else if (soonBills.length > 0) {
+    subtitle.textContent = `£${fmt(soonTotal)} due in the next 7 days`;
+  } else {
+    subtitle.textContent = `Coming up in the next 2 weeks`;
+  }
+
+  const renderBillRow = (b, group) => {
+    const accClass = b.account || 'joint';
+    const accLabel = accClass === 'joint' ? 'Joint' : accClass === 'me' ? 'You' : 'Chay';
+    const fixedTag = b.fixed === 0 ? '<span class="tag varies">Varies</span>' : '';
+    let whenLabel;
+    if (b.daysUntil === 0) whenLabel = '<span class="when-label today">TODAY</span>';
+    else if (b.daysUntil === 1) whenLabel = '<span class="when-label soon">TOMORROW</span>';
+    else whenLabel = `<span class="when-label">In ${b.daysUntil} days</span>`;
+
+    return `
+      <div class="item upcoming-${group}">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(b.name)}</div>
+          <div class="item-meta">${whenLabel}<span class="tag account-${accClass}">${accLabel}</span> ${fixedTag}</div>
+        </div>
+        <div class="item-amount out">-£${fmt(b.amount)}</div>
+      </div>
+    `;
+  };
+
+  let html = '';
+  todayBills.forEach(b => { html += renderBillRow(b, 'today'); });
+  soonBills.forEach(b => { html += renderBillRow(b, 'soon'); });
+  laterBills.forEach(b => { html += renderBillRow(b, 'later'); });
+  list.innerHTML = html;
+}
+
+function renderTotals() {
+  let totalIn = 0, totalOut = 0, totalSaved = 0, depositSaved = 0;
+  const byMonth = {}; // YYYY-MM -> { in, out, saved }
+
+  state.transactions.forEach(t => {
+    const month = payCycleForStr(t.date);
+    if (!byMonth[month]) byMonth[month] = { in: 0, out: 0, saved: 0 };
+
+    if (t.type === 'in') {
+      totalIn += t.amount;
+      byMonth[month].in += t.amount;
+    } else if (t.type === 'out') {
+      totalOut += t.amount;
+      byMonth[month].out += t.amount;
+    } else if (t.type === 'save') {
+      totalSaved += t.amount;
+      if (t.deposit) depositSaved += t.amount;
+      byMonth[month].saved += t.amount;
+    }
+  });
+
+  document.getElementById('totalsFund').textContent = fmt(totalSaved);
+  document.getElementById('totalsFundEur').textContent = '≈ €' + fmt(totalSaved * state.eurRate);
+  document.getElementById('totalsDeposit').textContent = '£' + fmt(depositSaved);
+  document.getElementById('totalsGeneral').textContent = '£' + fmt(totalSaved - depositSaved);
+
+  document.getElementById('totalsIn').textContent = '£' + fmt(totalIn);
+  document.getElementById('totalsOut').textContent = '£' + fmt(totalOut);
+  document.getElementById('totalsSaved').textContent = '£' + fmt(totalSaved);
+  const rate = totalIn > 0 ? (totalSaved / totalIn) * 100 : 0;
+  document.getElementById('totalsRate').textContent = Math.round(rate) + '%';
+
+  // Spending by category — separate bills (matched to templates) from day-to-day
+  const dayToDayTotals = {};
+  let billsTotal = 0;
+  state.transactions.forEach(t => {
+    if (t.type === 'out') {
+      if (t.billId) {
+        billsTotal += t.amount;
+      } else {
+        const cat = t.category || 'Uncategorised';
+        dayToDayTotals[cat] = (dayToDayTotals[cat] || 0) + t.amount;
+      }
+    }
+  });
+  const sortedCats = Object.entries(dayToDayTotals).sort((a, b) => b[1] - a[1]);
+  const catEl = document.getElementById('categoryBreakdown');
+  if (sortedCats.length === 0 && billsTotal === 0) {
+    catEl.innerHTML = '<div class="empty">Log a few transactions to see your spending breakdown.</div>';
+  } else {
+    const maxAmount = Math.max(billsTotal, sortedCats.length ? sortedCats[0][1] : 0);
+    let html = '';
+    // Show matched bills as one line first
+    if (billsTotal > 0) {
+      const pct = maxAmount > 0 ? (billsTotal / maxAmount) * 100 : 0;
+      html += `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">Bills (paid)</div>
+            <div class="sort-bar" style="margin-top: 6px;"><div class="sort-fill sort-bills" style="width: ${pct}%"></div></div>
+          </div>
+          <div class="item-amount out">£${fmt(billsTotal)}</div>
+        </div>
+      `;
+    }
+    html += sortedCats.map(([cat, amount]) => {
+      const pct = maxAmount > 0 ? (amount / maxAmount) * 100 : 0;
+      return `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(cat)}</div>
+            <div class="sort-bar" style="margin-top: 6px;"><div class="sort-fill sort-bills" style="width: ${pct}%"></div></div>
+          </div>
+          <div class="item-amount out">£${fmt(amount)}</div>
+        </div>
+      `;
+    }).join('');
+    catEl.innerHTML = html;
+  }
+
+  // Monthly breakdown
+  const months = Object.keys(byMonth).sort().reverse();
+  const breakdownEl = document.getElementById('monthlyBreakdown');
+  if (months.length === 0) {
+    breakdownEl.innerHTML = '<div class="empty">Log a few months of activity to see your trend.</div>';
+  } else {
+    breakdownEl.innerHTML = months.map(m => {
+      const d = new Date(m + '-01');
+      const label = d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+      const data = byMonth[m];
+      const net = data.in - data.out - data.saved;
+      return `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-title">${label}</div>
+            <div class="item-meta">In £${fmt(data.in)} · Out £${fmt(data.out)} · Net ${net >= 0 ? '£' : '-£'}${fmt(Math.abs(net))}</div>
+          </div>
+          <div class="item-amount save">£${fmt(data.saved)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function renderAll() {
+  try { renderHome(); } catch(e) { console.error('renderHome:', e); }
+  try { renderMoney(); } catch(e) { console.error('renderMoney:', e); }
+  try { renderBills(); } catch(e) { console.error('renderBills:', e); }
+  try { renderWishlist(); } catch(e) { console.error('renderWishlist:', e); }
+  try { renderSorter(); } catch(e) { console.error('renderSorter:', e); }
+  try { renderUpcoming(); } catch(e) { console.error('renderUpcoming:', e); }
+  try { renderTotals(); } catch(e) { console.error('renderTotals:', e); }
+}
+
+document.querySelectorAll('.modal').forEach(m => {
+  m.addEventListener('click', (e) => {
+    if (e.target === m) m.classList.remove('open');
+  });
+});
+
+renderAll();
+renderSettings();
+</script>
+
+</body>
+</html>
