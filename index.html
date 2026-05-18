@@ -291,6 +291,18 @@
   .stat-value.positive { color: var(--olive); }
   .stat-value.negative { color: var(--rust); }
 
+  .big-number {
+    font-family: 'Georgia', serif;
+    font-size: 44px;
+    color: var(--ink);
+    font-weight: 400;
+    letter-spacing: -1px;
+    margin-top: 4px;
+  }
+
+  .big-number.positive { color: var(--olive); }
+  .big-number.negative { color: var(--rust); }
+
   .btn {
     display: inline-flex;
     align-items: center;
@@ -826,6 +838,8 @@
   .tag.varies { background: var(--gold); color: var(--sand-light); }
   .tag.paid { background: var(--olive); color: var(--sand-light); }
   .tag.billmatch { background: rgba(124, 142, 114, 0.2); color: var(--olive); font-style: italic; }
+  .tag.affordable { background: var(--olive); color: var(--sand-light); }
+  .tag.waiting { background: rgba(0,0,0,0.06); color: var(--ink); font-style: italic; }
 
   .item.bill-paid {
     opacity: 0.55;
@@ -891,7 +905,7 @@
   <button class="tab active" data-view="home">Home</button>
   <button class="tab" data-view="money">Money</button>
   <button class="tab" data-view="bills">Bills</button>
-  <button class="tab" data-view="wishlist">Wishlist</button>
+  <button class="tab" data-view="wishlist">Wants</button>
   <button class="tab" data-view="totals">Totals</button>
   <button class="tab" data-view="settings">Settings</button>
 </div>
@@ -983,6 +997,13 @@
         <div class="stat-value" id="monthNet">£0</div>
       </div>
     </div>
+  </div>
+
+  <div class="card" id="dailyAllowanceCard">
+    <h2>Daily allowance</h2>
+    <p class="subtitle" id="dailyAllowanceSubtitle">Net leftover, divided by days until payday</p>
+    <div class="big-number" id="dailyAllowance">£0</div>
+    <div class="subtitle" id="dailyAllowanceDetail" style="margin-top: 8px;"></div>
   </div>
 
   <div class="card" id="upcomingBillsCard" style="display:none;">
@@ -1120,15 +1141,14 @@
 
 <div class="view" id="view-wishlist">
   <div class="header">
-    <div class="eyebrow">Things we'd like for the day</div>
-    <h1>Wishlist</h1>
+    <div class="eyebrow">Other things you'd like</div>
+    <h1>Want list</h1>
   </div>
 
   <div class="card">
-    <h2>Estimated wedding spend</h2>
-    <p class="subtitle">Tally of everything on your list</p>
+    <h2>Total wants</h2>
+    <p class="subtitle">Holidays, clothes, garden, chickens, anything that isn't bills or wedding</p>
     <div class="big-amount"><span class="currency">£</span><span id="wishTotal">0</span></div>
-    <div class="eur-equiv" id="wishEur">≈ €0</div>
     <div class="wish-totals">
       <div class="stat">
         <div class="stat-label">Must</div>
@@ -1143,15 +1163,31 @@
         <div class="stat-value" id="wishNice">£0</div>
       </div>
     </div>
-    <button class="btn btn-primary btn-full" onclick="openModal('wish')" style="margin-top: 12px;">Add to wishlist</button>
+    <button class="btn btn-primary btn-full" onclick="openModal('wish')" style="margin-top: 12px;">Add to want list</button>
   </div>
 
   <div id="budgetCompare"></div>
 
+  <div class="card" id="affordPlannerCard">
+    <h2>What could I buy this month?</h2>
+    <p class="subtitle" id="affordSummary">Based on typical income, bills and wedding pace</p>
+    <div class="stat-grid" style="margin-bottom: 12px;">
+      <div class="stat">
+        <div class="stat-label">Typical leftover</div>
+        <div class="stat-value" id="typicalLeftover">£0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Fits this month</div>
+        <div class="stat-value" id="fitsCount">0</div>
+      </div>
+    </div>
+    <div class="item-list" id="affordList"></div>
+  </div>
+
   <div class="card">
     <h2>Items</h2>
     <div class="item-list" id="wishList">
-      <div class="empty">Nothing on the list yet. Add the things you both want — venue, dress, flowers, cake, anything.</div>
+      <div class="empty">Nothing on the list yet. Add things you'd like but haven't bought — a trip, new boots, more chickens, anything that isn't a wedding cost.</div>
     </div>
   </div>
 </div>
@@ -1286,7 +1322,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v7 · 18 May 2026 · timezone fix · 122 default transactions</p>
+    <p class="subtitle">Version: v9 · affordability planner</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1434,11 +1470,11 @@
 <div class="modal" id="modalWish">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal('wish')">×</button>
-    <h2>New wishlist item</h2>
+    <h2>New want</h2>
 
     <div class="field">
       <label>What is it?</label>
-      <input type="text" id="wishName" placeholder="e.g. Venue, dress, photographer, flowers">
+      <input type="text" id="wishName" placeholder="e.g. Trip to Italy, new boots, more chickens">
     </div>
 
     <div class="field">
@@ -2118,6 +2154,37 @@ function renderHome() {
   netEl.textContent = (net < 0 ? '-£' : '£') + fmt(Math.abs(net));
   netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
 
+  // Daily allowance: take remaining bills (unpaid this cycle) into account
+  const cycle = getSalaryMonth();
+  const today = new Date();
+  // Next payday = last working day of current calendar month, OR if today is past it,
+  // last working day of next month
+  let nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth());
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (todayMid >= nextPayday) {
+    nextPayday = lastWorkingDay(today.getFullYear(), today.getMonth() + 1);
+  }
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysToPayday = Math.max(1, Math.ceil((nextPayday - todayMid) / msPerDay));
+
+  // Unpaid bills for this cycle
+  const unpaidBillsTotal = state.bills
+    .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
+    .reduce((s, b) => s + b.amount, 0);
+
+  // Money still available to spend = net - any bills still due this cycle
+  const availableToSpend = net - unpaidBillsTotal;
+  const dailyAllowance = availableToSpend / daysToPayday;
+  const dailyEl = document.getElementById('dailyAllowance');
+  dailyEl.textContent = (dailyAllowance < 0 ? '-£' : '£') + fmt(Math.abs(dailyAllowance));
+  dailyEl.className = 'big-number ' + (dailyAllowance >= 0 ? 'positive' : 'negative');
+  const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  let detail = `£${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'to spend'} over ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr}).`;
+  if (unpaidBillsTotal > 0) {
+    detail += ` Includes leaving £${fmt(unpaidBillsTotal)} for unpaid bills this cycle.`;
+  }
+  document.getElementById('dailyAllowanceDetail').textContent = detail;
+
   const recent = [...state.transactions].sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id).slice(0, 5);
   const recentEl = document.getElementById('recentList');
   if (recent.length === 0) {
@@ -2387,41 +2454,114 @@ function renderBills() {
 function renderWishlist() {
   const { must, want, nice, total } = getWishTotals();
   document.getElementById('wishTotal').textContent = fmt(total);
-  document.getElementById('wishEur').textContent = '≈ €' + fmt(total * state.eurRate);
   document.getElementById('wishMust').textContent = fmtMoney(must);
   document.getElementById('wishWant').textContent = fmtMoney(want);
   document.getElementById('wishNice').textContent = fmtMoney(nice);
 
   const compareEl = document.getElementById('budgetCompare');
-  if (total > 0) {
-    const diff = state.goal - total;
-    if (diff < 0) {
-      compareEl.innerHTML = `<div class="over-budget">Your wishlist is <strong>£${fmt(-diff)} over</strong> your £${fmt(state.goal)} budget. Time to cut some "nice to haves" or bump the budget.</div>`;
-    } else {
-      compareEl.innerHTML = `<div class="under-budget">You have <strong>£${fmt(diff)} of headroom</strong> under your £${fmt(state.goal)} budget. Room to add things if you want.</div>`;
-    }
+  compareEl.innerHTML = '';
+
+  // === Affordability planner ===
+  // Typical leftover = (salaries) - (bills) - (monthly wedding savings target)
+  const typicalIncome = (state.typicalSalary || 0) + (state.typicalChay || 0);
+  const billsTotal = state.bills.reduce((s, b) => s + b.amount, 0);
+  const months = getMonthsUntil(state.weddingDate);
+  const saved = state.transactions.filter(t => t.type === 'save').reduce((s, t) => s + t.amount, 0);
+  const remaining = Math.max(0, state.goal - saved);
+  const monthlyWeddingTarget = months > 0 ? remaining / months : 0;
+  const typicalLeftover = typicalIncome - billsTotal - monthlyWeddingTarget;
+
+  // Real "available this month" — use actual net minus unpaid bills (same as Daily Allowance card)
+  const cycle = getSalaryMonth();
+  let monthIn = 0, monthOut = 0, monthSaved = 0;
+  state.transactions.forEach(t => {
+    if (payCycleForStr(t.date) !== cycle) return;
+    if (t.type === 'in') monthIn += t.amount;
+    else if (t.type === 'out') monthOut += t.amount;
+    else if (t.type === 'save') monthSaved += t.amount;
+  });
+  const unpaidBillsThisCycle = state.bills
+    .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
+    .reduce((s, b) => s + b.amount, 0);
+  const realAvailableThisMonth = monthIn - monthOut - monthSaved - unpaidBillsThisCycle;
+
+  document.getElementById('typicalLeftover').textContent = fmtMoney(Math.max(0, typicalLeftover));
+  if (typicalIncome === 0) {
+    document.getElementById('affordSummary').textContent = 'Set your typical salaries in Settings to see what you can afford';
   } else {
-    compareEl.innerHTML = '';
+    document.getElementById('affordSummary').textContent =
+      `Typical month: £${fmt(typicalIncome)} in, £${fmt(billsTotal)} bills, £${fmt(monthlyWeddingTarget)} wedding savings`;
   }
 
+  // Build "fits this month" list — wants that fit in realAvailableThisMonth
+  const allWants = [...state.wishlist].sort((a, b) => a.amount - b.amount);
+  const fitsThisMonth = [];
+  let runningTotal = 0;
+  for (const w of allWants) {
+    if (runningTotal + w.amount <= realAvailableThisMonth) {
+      fitsThisMonth.push(w);
+      runningTotal += w.amount;
+    }
+  }
+  document.getElementById('fitsCount').textContent = fitsThisMonth.length;
+
+  const affordEl = document.getElementById('affordList');
+  if (allWants.length === 0) {
+    affordEl.innerHTML = '<div class="empty">Add some wants below to see what you can afford.</div>';
+  } else if (realAvailableThisMonth <= 0) {
+    affordEl.innerHTML = `<div class="empty">You've used this month's leftover. Wait until next payday on ${lastWorkingDay(new Date().getFullYear(), new Date().getMonth()).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}.</div>`;
+  } else if (fitsThisMonth.length === 0) {
+    const cheapest = allWants[0];
+    affordEl.innerHTML = `<div class="empty">Your cheapest want (${escapeHtml(cheapest.name)} at £${fmt(cheapest.amount)}) doesn't fit in this month's £${fmt(realAvailableThisMonth)} leftover.</div>`;
+  } else {
+    affordEl.innerHTML = fitsThisMonth.map(w => `
+      <div class="item">
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(w.name)}</div>
+          <div class="item-meta"><span class="tag ${w.priority}">${w.priority === 'must' ? 'Must' : w.priority === 'want' ? 'Want' : 'Nice'}</span> · fits in this month's leftover</div>
+        </div>
+        <div class="item-amount" style="color: var(--olive);">£${fmt(w.amount)}</div>
+      </div>
+    `).join('');
+    const leftoverAfter = realAvailableThisMonth - runningTotal;
+    affordEl.innerHTML += `<div class="subtitle" style="margin-top: 10px;">£${fmt(leftoverAfter)} would still be free after these.</div>`;
+  }
+
+  // === Items list with "affordable in" badges ===
   const el = document.getElementById('wishList');
   if (state.wishlist.length === 0) {
-    el.innerHTML = '<div class="empty">Nothing on the list yet. Add the things you both want — venue, dress, flowers, cake, anything.</div>';
+    el.innerHTML = '<div class="empty">Nothing on the list yet. Add things you\'d like but haven\'t bought — a trip, new boots, more chickens, anything that isn\'t a wedding cost.</div>';
   } else {
     const order = { must: 0, want: 1, nice: 2 };
     const sorted = [...state.wishlist].sort((a,b) => order[a.priority] - order[b.priority] || b.amount - a.amount);
-    el.innerHTML = sorted.map(w => `
-      <div class="item wish-${w.priority}">
-        <div class="item-info">
-          <div class="item-title">${escapeHtml(w.name)}</div>
-          <div class="item-meta">
-            <span class="tag ${w.priority}">${w.priority === 'must' ? 'Must' : w.priority === 'want' ? 'Want' : 'Nice'}</span>${w.notes ? ' · ' + escapeHtml(w.notes) : ''}
+    el.innerHTML = sorted.map(w => {
+      let timing = '';
+      if (w.amount <= realAvailableThisMonth) {
+        timing = '<span class="tag affordable">Buy this month</span>';
+      } else if (typicalLeftover > 0) {
+        const monthsToSave = Math.ceil(w.amount / typicalLeftover);
+        const futureDate = new Date();
+        futureDate.setMonth(futureDate.getMonth() + monthsToSave);
+        const monthLabel = futureDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+        timing = `<span class="tag waiting">~${monthsToSave} month${monthsToSave !== 1 ? 's' : ''} (${monthLabel})</span>`;
+      } else if (typicalIncome === 0) {
+        timing = '<span class="tag waiting">Set salaries to estimate</span>';
+      } else {
+        timing = '<span class="tag waiting">Doesn\'t fit current budget</span>';
+      }
+      return `
+        <div class="item wish-${w.priority}">
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(w.name)}</div>
+            <div class="item-meta">
+              <span class="tag ${w.priority}">${w.priority === 'must' ? 'Must' : w.priority === 'want' ? 'Want' : 'Nice'}</span> ${timing}${w.notes ? ' · ' + escapeHtml(w.notes) : ''}
+            </div>
           </div>
+          <div class="item-amount wish">£${fmt(w.amount)}</div>
+          <button class="item-del" onclick="deleteWish(${w.id})">×</button>
         </div>
-        <div class="item-amount wish">£${fmt(w.amount)}</div>
-        <button class="item-del" onclick="deleteWish(${w.id})">×</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
 
@@ -2727,7 +2867,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v7
+  el.textContent = `VERSION: v9
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
