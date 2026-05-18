@@ -1171,7 +1171,7 @@
         <div class="sort-amount" id="sortLeftover">£0</div>
       </div>
     </div>
-    <div class="daily-allowance" id="dailyAllowance"></div>
+    <div class="daily-allowance" id="sorterDailyAllowance"></div>
     <div class="sorter-hint" id="sorterHint"></div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="useTypicalSalary()">Use typical</button>
@@ -1417,6 +1417,15 @@
   </div>
 
   <div class="card">
+    <h2>Christmas pot</h2>
+    <div class="field">
+      <label>Current balance (GBP)</label>
+      <input type="number" id="setChristmas" inputmode="decimal" step="0.01">
+    </div>
+    <p class="small-note">Existing balance in your Monzo Christmas pot. New round-ups will add on top of this.</p>
+  </div>
+
+  <div class="card">
     <button class="btn btn-primary btn-full" onclick="saveSettings()">Save changes</button>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="exportData()">Export data</button>
@@ -1442,7 +1451,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v14 · round-up prediction + Christmas savings card</p>
+    <p class="subtitle">Version: v15 · duplicate ID fix + Christmas start balance</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1631,6 +1640,7 @@ const defaultState = {
   eurRate: 1.17,
   typicalSalary: 0,
   typicalChay: 0,
+  christmasStart: 277.15,
   transactions: [
     {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
     {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
@@ -1813,6 +1823,7 @@ function load() {
       // Quick log + recap defaults for older saves
       if (!merged.quickLogs) merged.quickLogs = defaultState.quickLogs;
       if (!merged.dismissedRecaps) merged.dismissedRecaps = [];
+      if (merged.christmasStart === undefined) merged.christmasStart = defaultState.christmasStart;
       return merged;
     }
     const v1 = localStorage.getItem('wedding-fund-jess-v1');
@@ -2392,10 +2403,12 @@ function renderChristmas(cycle) {
       if (payCycleForStr(t.date) === cycle) cycleTotal += t.amount;
     }
   });
+  // Add starting balance from settings
+  const startBalance = state.christmasStart || 0;
   const cycleEl = document.getElementById('christmasCycle');
   const totalEl = document.getElementById('christmasTotal');
   if (cycleEl) cycleEl.textContent = fmtMoney(cycleTotal);
-  if (totalEl) totalEl.textContent = fmtMoney(allTime);
+  if (totalEl) totalEl.textContent = fmtMoney(allTime + startBalance);
 }
 
 function renderPace(cycle, daysToPayday, availableToSpend, monthOut) {
@@ -2612,23 +2625,25 @@ function renderSorter() {
   document.getElementById('sortWedding').textContent = '£' + fmt(toWedding);
   document.getElementById('sortLeftover').textContent = '£' + fmt(leftover);
 
-  // Daily allowance
-  const dailyEl = document.getElementById('dailyAllowance');
-  if (leftover > 0) {
-    const now = new Date();
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const today = now.getDate();
-    const daysLeft = Math.max(1, lastDay - today + 1);
-    const perDay = leftover / daysLeft;
-    dailyEl.className = 'daily-allowance show';
-    dailyEl.innerHTML = `
-      <div class="daily-allowance-label">Daily spend allowance</div>
-      <div class="daily-allowance-amount">£${fmt(perDay)}/day</div>
-      <div class="daily-allowance-note">£${fmt(leftover)} leftover ÷ ${daysLeft} days left this month</div>
-    `;
-  } else {
-    dailyEl.className = 'daily-allowance';
-    dailyEl.innerHTML = '';
+  // Daily allowance (inside salary sorter card)
+  const dailyEl = document.getElementById('sorterDailyAllowance');
+  if (dailyEl) {
+    if (leftover > 0) {
+      const now = new Date();
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const today = now.getDate();
+      const daysLeft = Math.max(1, lastDay - today + 1);
+      const perDay = leftover / daysLeft;
+      dailyEl.className = 'daily-allowance show';
+      dailyEl.innerHTML = `
+        <div class="daily-allowance-label">Daily spend allowance</div>
+        <div class="daily-allowance-amount">£${fmt(perDay)}/day</div>
+        <div class="daily-allowance-note">£${fmt(leftover)} leftover ÷ ${daysLeft} days left this month</div>
+      `;
+    } else {
+      dailyEl.className = 'daily-allowance';
+      dailyEl.innerHTML = '';
+    }
   }
 
   // Breakdown
@@ -2929,6 +2944,8 @@ function renderSettings() {
   document.getElementById('setRate').value = state.eurRate;
   document.getElementById('setSalary').value = state.typicalSalary || '';
   document.getElementById('setChay').value = state.typicalChay || '';
+  const cs = document.getElementById('setChristmas');
+  if (cs) cs.value = state.christmasStart || 0;
   renderQuickLogSettings();
 }
 
@@ -2986,6 +3003,11 @@ function saveSettings() {
   if (r > 0) state.eurRate = r;
   if (sal >= 0) state.typicalSalary = sal || 0;
   if (chaySal >= 0) state.typicalChay = chaySal || 0;
+  const csEl = document.getElementById('setChristmas');
+  if (csEl) {
+    const cs = parseFloat(csEl.value);
+    if (!isNaN(cs) && cs >= 0) state.christmasStart = cs;
+  }
 
   save();
   renderAll();
@@ -3262,7 +3284,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v14
+  el.textContent = `VERSION: v15
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
