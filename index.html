@@ -1470,7 +1470,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v18 · upcoming events + daily allowance reflects them</p>
+    <p class="subtitle">Version: v19 · wants with target dates</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1637,6 +1637,12 @@
         <button data-priority="want">Want</button>
         <button data-priority="nice">Nice</button>
       </div>
+    </div>
+
+    <div class="field">
+      <label>Want it by (optional)</label>
+      <input type="date" id="wishTargetDate">
+      <p class="small-note" style="margin-top: 4px;">A soft target. If you set this, the app will show how much to save per month.</p>
     </div>
 
     <div class="field">
@@ -2005,6 +2011,7 @@ function openModal(type) {
     document.getElementById('wishName').value = '';
     document.getElementById('wishAmount').value = '';
     document.getElementById('wishNotes').value = '';
+    document.getElementById('wishTargetDate').value = '';
     currentWishPriority = 'must';
     updateWishSeg();
     document.getElementById('modalWish').classList.add('open');
@@ -2243,6 +2250,7 @@ function saveWish() {
   const name = document.getElementById('wishName').value.trim();
   const amount = parseFloat(document.getElementById('wishAmount').value) || 0;
   const notes = document.getElementById('wishNotes').value.trim();
+  const targetDate = document.getElementById('wishTargetDate').value || null;
 
   if (!name) { alert('Add a name'); return; }
 
@@ -2251,7 +2259,8 @@ function saveWish() {
     name,
     amount,
     priority: currentWishPriority,
-    notes
+    notes,
+    targetDate
   });
 
   save();
@@ -3105,10 +3114,33 @@ function renderWishlist() {
     el.innerHTML = '<div class="empty">Nothing on the list yet. Add things you\'d like but haven\'t bought — a trip, new boots, more chickens, anything that isn\'t a wedding cost.</div>';
   } else {
     const order = { must: 0, want: 1, nice: 2 };
-    const sorted = [...state.wishlist].sort((a,b) => order[a.priority] - order[b.priority] || b.amount - a.amount);
+    // Sort: items with target date first (nearest first), then by priority/amount
+    const sorted = [...state.wishlist].sort((a, b) => {
+      if (a.targetDate && b.targetDate) return a.targetDate.localeCompare(b.targetDate);
+      if (a.targetDate && !b.targetDate) return -1;
+      if (!a.targetDate && b.targetDate) return 1;
+      return order[a.priority] - order[b.priority] || b.amount - a.amount;
+    });
     el.innerHTML = sorted.map(w => {
       let timing = '';
-      if (w.amount <= realAvailableThisMonth) {
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+
+      if (w.targetDate) {
+        // User set a date — work out months to save and per-month required
+        const target = new Date(w.targetDate);
+        const daysUntil = Math.round((target - todayDate) / 86400000);
+        const monthsUntil = Math.max(1, Math.round(daysUntil / 30));
+        const perMonth = w.amount / monthsUntil;
+        const dateLabel = target.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: target.getFullYear() !== todayDate.getFullYear() ? 'numeric' : undefined });
+        if (daysUntil < 0) {
+          timing = `<span class="tag waiting">Target ${dateLabel} (passed)</span>`;
+        } else if (w.amount <= realAvailableThisMonth) {
+          timing = `<span class="tag affordable">Buy this month</span> <span class="tag waiting">By ${dateLabel}</span>`;
+        } else {
+          timing = `<span class="tag waiting">By ${dateLabel} · save £${fmt(perMonth)}/mo</span>`;
+        }
+      } else if (w.amount <= realAvailableThisMonth) {
         timing = '<span class="tag affordable">Buy this month</span>';
       } else if (typicalLeftover > 0) {
         const monthsToSave = Math.ceil(w.amount / typicalLeftover);
@@ -3485,7 +3517,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v18
+  el.textContent = `VERSION: v19
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
