@@ -1075,6 +1075,12 @@
     </div>
   </div>
 
+  <div class="card" id="balanceCard" onclick="editAccountBalance()" style="cursor: pointer;">
+    <h2>Current balance</h2>
+    <p class="subtitle" id="balanceSubtitle">Tap to update from Monzo</p>
+    <div class="big-number" id="balanceAmount">£0</div>
+  </div>
+
   <div class="card" id="dailyAllowanceCard">
     <h2>Daily allowance</h2>
     <p class="subtitle" id="dailyAllowanceSubtitle">Net leftover, divided by days until payday</p>
@@ -1470,7 +1476,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v19 · wants with target dates</p>
+    <p class="subtitle">Version: v20 · account balance based</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -1695,6 +1701,8 @@ const defaultState = {
   typicalSalary: 0,
   typicalChay: 0,
   christmasStart: 260.81,
+  accountBalance: 2324.30,
+  accountBalanceUpdated: '2026-05-19',
   transactions: [
     {"id": 1777507200000, "type": "in", "amount": 1959.2, "desc": "Acorn Care And Edu", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
     {"id": 1777507200001, "type": "in", "amount": 3142.73, "desc": "JUNO PROPERTY LAWY", "date": "2026-04-30", "deposit": 0, "category": "Income", "billId": null},
@@ -1879,6 +1887,8 @@ function load() {
       if (!merged.quickLogs) merged.quickLogs = defaultState.quickLogs;
       if (!merged.dismissedRecaps) merged.dismissedRecaps = [];
       if (!merged.events) merged.events = [];
+      if (merged.accountBalance === undefined) merged.accountBalance = defaultState.accountBalance;
+      if (merged.accountBalanceUpdated === undefined) merged.accountBalanceUpdated = defaultState.accountBalanceUpdated;
       if (merged.christmasStart === undefined) merged.christmasStart = defaultState.christmasStart;
       return merged;
     }
@@ -2514,7 +2524,28 @@ function renderHome() {
     netEl.className = 'stat-value ' + (net >= 0 ? 'positive' : 'negative');
   } catch(e) { console.error('this month stats failed:', e); }
 
-  // Daily allowance — always run, isolate failure
+  // Account balance card
+  try {
+    const bal = state.accountBalance || 0;
+    const balEl = document.getElementById('balanceAmount');
+    if (balEl) {
+      balEl.textContent = (bal < 0 ? '-£' : '£') + fmt(Math.abs(bal));
+      balEl.className = 'big-number ' + (bal >= 0 ? 'positive' : 'negative');
+    }
+    const subEl = document.getElementById('balanceSubtitle');
+    if (subEl && state.accountBalanceUpdated) {
+      const updated = new Date(state.accountBalanceUpdated);
+      const todayDate = new Date();
+      todayDate.setHours(0,0,0,0);
+      const diff = Math.round((todayDate - updated) / 86400000);
+      let when = 'today';
+      if (diff === 1) when = 'yesterday';
+      else if (diff > 1) when = `${diff} days ago`;
+      subEl.textContent = `Updated ${when} · tap to refresh`;
+    }
+  } catch(e) { console.error('balance render failed:', e); }
+
+  // Daily allowance — now based on actual account balance
   let cycle, daysToPayday, availableToSpend;
   try {
     cycle = getSalaryMonth();
@@ -2531,11 +2562,11 @@ function renderHome() {
       .filter(b => !(b.paidMonths && b.paidMonths.includes(cycle)))
       .reduce((s, b) => s + b.amount, 0);
 
-    // Events between today and payday — pre-committed spending
     const eventsBeforePayday = getEventsBeforePayday(nextPayday);
 
-    const net = monthIn - monthOut - monthSaved;
-    availableToSpend = net - unpaidBillsTotal - eventsBeforePayday;
+    // Available = current balance - bills still due - events still upcoming
+    const balance = state.accountBalance || 0;
+    availableToSpend = balance - unpaidBillsTotal - eventsBeforePayday;
     const dailyAllowance = availableToSpend / daysToPayday;
 
     const dailyEl = document.getElementById('dailyAllowance');
@@ -2544,12 +2575,12 @@ function renderHome() {
       dailyEl.className = 'big-number ' + (dailyAllowance >= 0 ? 'positive' : 'negative');
     }
     const paydayStr = nextPayday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-    let detail = `That's £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'left'} spread across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
+    let detail = `£${fmt(balance)} balance · £${fmt(Math.abs(availableToSpend))} ${availableToSpend < 0 ? 'over' : 'free'} across ${daysToPayday} day${daysToPayday !== 1 ? 's' : ''} until payday (${paydayStr})`;
     const holdbacks = [];
-    if (unpaidBillsTotal > 0) holdbacks.push(`£${fmt(unpaidBillsTotal)} for bills`);
-    if (eventsBeforePayday > 0) holdbacks.push(`£${fmt(eventsBeforePayday)} for upcoming events`);
+    if (unpaidBillsTotal > 0) holdbacks.push(`£${fmt(unpaidBillsTotal)} bills`);
+    if (eventsBeforePayday > 0) holdbacks.push(`£${fmt(eventsBeforePayday)} events`);
     if (holdbacks.length > 0) {
-      detail += `, after holding back ${holdbacks.join(' and ')}.`;
+      detail += `. Holding back ${holdbacks.join(' + ')}.`;
     } else {
       detail += '.';
     }
@@ -2595,6 +2626,21 @@ function renderChristmas(cycle) {
   const totalEl = document.getElementById('christmasTotal');
   if (cycleEl) cycleEl.textContent = fmtMoney(cycleTotal);
   if (totalEl) totalEl.textContent = fmtMoney(currentBalance);
+}
+
+function editAccountBalance() {
+  const current = state.accountBalance || 0;
+  const newStr = prompt(`What's currently in your main Monzo spending account?\n\nCurrent: £${fmt(current)}`, current.toFixed(2));
+  if (newStr === null) return;
+  const newBal = parseFloat(newStr);
+  if (isNaN(newBal)) {
+    alert('Invalid amount');
+    return;
+  }
+  state.accountBalance = newBal;
+  state.accountBalanceUpdated = todayStr();
+  save();
+  renderAll();
 }
 
 function editChristmasBalance() {
@@ -2755,6 +2801,9 @@ function moveLeftoverToFund(amount, cycleKey) {
     category: 'Savings',
     billId: null
   });
+  // Reduce account balance — money moved out to wedding fund
+  state.accountBalance = (state.accountBalance || 0) - amount;
+  state.accountBalanceUpdated = todayStr();
   if (!state.dismissedRecaps) state.dismissedRecaps = [];
   state.dismissedRecaps.push(cycleKey);
   save();
@@ -3517,7 +3566,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v19
+  el.textContent = `VERSION: v20
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
