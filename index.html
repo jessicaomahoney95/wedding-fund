@@ -1476,7 +1476,7 @@
 
   <div class="card">
     <h2>Debug</h2>
-    <p class="subtitle">Version: v20 · account balance based</p>
+    <p class="subtitle">Version: v21 · balance auto-updates as you log</p>
     <button class="btn btn-ghost btn-full" onclick="showDebug()">Show stored data</button>
     <pre id="debugOutput" style="font-size: 11px; background: var(--sand-light); padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
   </div>
@@ -2172,6 +2172,14 @@ function saveBatch() {
   }
 
   state.transactions.push(...entries);
+  // Auto-adjust balance for batch
+  entries.forEach(e => {
+    if (e.type === 'out' || e.type === 'save') {
+      state.accountBalance = (state.accountBalance || 0) - e.amount;
+    } else if (e.type === 'in') {
+      state.accountBalance = (state.accountBalance || 0) + e.amount;
+    }
+  });
   save();
   closeModal('batch');
   renderAll();
@@ -2199,6 +2207,13 @@ function saveTx() {
     billId: null
   });
 
+  // Auto-adjust balance: out and save reduce, in increases
+  if (currentTxType === 'out' || currentTxType === 'save') {
+    state.accountBalance = (state.accountBalance || 0) - amount;
+  } else if (currentTxType === 'in') {
+    state.accountBalance = (state.accountBalance || 0) + amount;
+  }
+
   // Round-up prediction: if it's an out transaction and not a whole pound, offer round-up
   let roundUp = 0;
   if (currentTxType === 'out') {
@@ -2224,7 +2239,8 @@ function saveTx() {
           category: 'Savings',
           billId: null
         });
-        // No need to bump christmasStart — renderChristmas adds logged round-ups automatically
+        // Round-up also leaves the main account
+        state.accountBalance = (state.accountBalance || 0) - roundUp;
         save();
         renderAll();
       }
@@ -2290,6 +2306,15 @@ function updateQuickBudget() {
 
 function deleteTx(id) {
   if (!confirm('Delete this entry?')) return;
+  const tx = state.transactions.find(t => t.id === id);
+  if (tx) {
+    // Reverse the balance impact
+    if (tx.type === 'out' || tx.type === 'save') {
+      state.accountBalance = (state.accountBalance || 0) + tx.amount;
+    } else if (tx.type === 'in') {
+      state.accountBalance = (state.accountBalance || 0) - tx.amount;
+    }
+  }
   state.transactions = state.transactions.filter(t => t.id !== id);
   save();
   renderAll();
@@ -2986,6 +3011,14 @@ function logSorterSplit() {
   }
 
   state.transactions.push(...entries);
+  // Auto-adjust balance for the salary split
+  entries.forEach(e => {
+    if (e.type === 'out' || e.type === 'save') {
+      state.accountBalance = (state.accountBalance || 0) - e.amount;
+    } else if (e.type === 'in') {
+      state.accountBalance = (state.accountBalance || 0) + e.amount;
+    }
+  });
   state.sorterDraft = { me: 0, chay: 0, other: 0, otherNote: '', month: getSalaryMonth() };
   save();
 
@@ -3566,7 +3599,7 @@ function showDebug() {
   try { renderUpcoming(); } catch(e) { errors.push('renderUpcoming: ' + e.message); }
   try { renderTotals(); } catch(e) { errors.push('renderTotals: ' + e.message); }
 
-  el.textContent = `VERSION: v20
+  el.textContent = `VERSION: v21
 Today: ${new Date().toISOString().slice(0,10)}
 Current pay cycle: ${cycle}
 
